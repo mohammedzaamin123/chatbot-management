@@ -78,18 +78,6 @@ export default {
 					yellow: '#FFCC00',
 				}
 			},
-			backgroundImage: {
-				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-				'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-				// Apple-style gradients
-				'apple-gradient': 'linear-gradient(135deg, #007AFF 0%, #5AC8FA 100%)',
-				'apple-mesh': 'radial-gradient(at 40% 20%, rgba(0, 122, 255, 0.15) 0px, transparent 50%), radial-gradient(at 80% 0%, rgba(90, 200, 250, 0.15) 0px, transparent 50%)',
-			},
-			boxShadow: {
-				'apple': '0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)',
-				'apple-lg': '0 4px 12px rgba(0, 0, 0, 0.15)',
-				'apple-xl': '0 8px 24px rgba(0, 0, 0, 0.15)',
-			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
@@ -111,6 +99,11 @@ export default {
 				'apple-xl': ['19px', '32px'],
 				'apple-2xl': ['22px', '36px'],
 				'apple-3xl': ['28px', '40px'],
+			},
+			boxShadow: {
+				'apple': '0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)',
+				'apple-lg': '0 4px 12px rgba(0, 0, 0, 0.15)',
+				'apple-xl': '0 8px 24px rgba(0, 0, 0, 0.15)',
 			},
 			keyframes: {
 				'fade-in': {
