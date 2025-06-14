@@ -17,16 +17,16 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     // Initialize sample data on first load
     initializeSampleData();
     
-    // Initialize theme
-    if (theme === 'light') {
-      document.documentElement.classList.add('light');
+    // Initialize theme - light theme is default
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
     } else {
-      document.documentElement.classList.remove('light');
+      document.documentElement.classList.remove('dark');
     }
   }, [initializeSampleData, theme]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex transition-colors duration-300">
+    <div className="min-h-screen bg-background text-foreground flex transition-all duration-300">
       <Sidebar />
       
       <div className={`flex-1 flex flex-col transition-all duration-300 ${

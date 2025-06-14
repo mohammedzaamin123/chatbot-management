@@ -171,7 +171,7 @@ export const useStore = create<AppStore>()(
       sidebarCollapsed: false,
       currentView: 'dashboard',
       loading: false,
-      theme: 'dark',
+      theme: 'light',
       analytics: {
         totalMessages: 0,
         totalPosts: 0,

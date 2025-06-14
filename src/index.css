@@ -1,57 +1,55 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@100;200;300;400;500;600;700;800;900&family=SF+Pro+Text:wght@100;200;300;400;500;600;700;800;900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Enhanced design system with light/dark theme support */
-
 @layer base {
   :root {
-    /* Dark theme (default) */
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 188 94% 67%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 188 94% 67%;
+    /* Light theme (default) - Apple inspired */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 9%;
+    --primary: 212 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 98%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 210 40% 98%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 210 40% 98%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 212 100% 50%;
     --radius: 0.75rem;
   }
 
-  .light {
-    /* Light theme */
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 188 94% 67%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 98%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 98%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 98%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 188 94% 67%;
+  .dark {
+    /* Dark theme */
+    --background: 0 0% 4%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 4%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 4%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 212 100% 50%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 0 0% 15%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 212 100% 50%;
   }
 }
 
@@ -61,226 +59,157 @@
   }
 
   body {
-    @apply bg-background text-foreground font-manrope transition-colors duration-300;
+    @apply bg-background text-foreground;
+    font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     min-height: 100vh;
+    transition: all 0.3s ease;
   }
 
-  /* Light mode background */
-  .light body {
+  /* Light mode background (default) */
+  body {
     background: 
-      radial-gradient(ellipse at top left, rgba(34, 211, 238, 0.15) 0%, transparent 50%),
-      radial-gradient(ellipse at top right, rgba(165, 243, 252, 0.15) 0%, transparent 50%),
-      radial-gradient(ellipse at bottom, rgba(186, 230, 253, 0.15) 0%, transparent 50%),
-      #FEFEFE;
+      radial-gradient(ellipse at top, rgba(59, 130, 246, 0.03) 0%, transparent 50%),
+      #FAFAFA;
   }
 
   /* Dark mode background */
-  body:not(.light) {
+  .dark body {
     background: 
-      radial-gradient(ellipse at top, rgba(34, 211, 238, 0.1) 0%, transparent 50%),
-      radial-gradient(ellipse at bottom, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
-      #0a0a0a;
+      radial-gradient(ellipse at top, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+      #0A0A0A;
   }
 
-  /* Enhanced scrollbar */
+  /* Headings use SF Pro Display */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+
+  /* Enhanced scrollbar - Apple style */
   ::-webkit-scrollbar {
     width: 8px;
   }
 
   ::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.05);
     border-radius: 4px;
   }
 
-  .light ::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.05);
+  .dark ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
   }
 
   ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #22D3EE, #06B6D4);
+    background: rgba(0, 0, 0, 0.2);
     border-radius: 4px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, #0891B2, #0E7490);
+    background: rgba(0, 0, 0, 0.3);
   }
 
-  /* Glass morphism utility classes */
+  .dark ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  /* Glass effects */
   .glass {
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(20px) saturate(180%);
+    background: rgba(255, 255, 255, 0.8);
     border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
-  .light .glass {
-    background: rgba(255, 255, 255, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
-  }
-
-  body:not(.light) .glass {
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  .glass-strong {
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-  }
-
-  .light .glass-strong {
-    background: rgba(255, 255, 255, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.9);
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
-  }
-
-  body:not(.light) .glass-strong {
-    background: rgba(255, 255, 255, 0.15);
-  }
-
-  /* Enhanced neon effects */
-  .neon-text {
-    background: linear-gradient(135deg, #22D3EE, #06B6D4, #0891B2);
-    background-size: 200% 200%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: gradient-shift 8s ease infinite;
-  }
-
-  .light .neon-text {
-    background: linear-gradient(135deg, #0891B2, #0E7490, #164E63);
-    background-size: 200% 200%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: gradient-shift 8s ease infinite;
-  }
-
-  /* Floating animation */
-  .floating {
-    animation: bounce-soft 3s ease-in-out infinite;
+  .dark .glass {
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 }
 
-/* Enhanced component styles */
+/* Apple-style component classes */
 .metric-card {
-  @apply backdrop-blur-xl rounded-3xl p-6 transition-all duration-300 hover:scale-105;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  @apply backdrop-blur-xl rounded-2xl p-6 transition-all duration-200 hover:scale-[1.02];
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.light .metric-card {
-  @apply bg-white/80 shadow-soft;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-}
-
-body:not(.light) .metric-card {
-  @apply bg-white/10 shadow-glass;
-}
-
-.metric-card:hover {
-  @apply shadow-dreamy transform scale-105;
+.dark .metric-card {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .nav-item {
-  @apply relative flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300;
+  @apply relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200;
 }
 
 .nav-item:hover {
-  @apply transform scale-105;
+  @apply transform scale-[1.02];
+  background: rgba(0, 0, 0, 0.05);
 }
 
-.light .nav-item:hover {
-  @apply bg-white/60 shadow-soft;
-}
-
-body:not(.light) .nav-item:hover {
-  @apply bg-white/10 shadow-glow;
+.dark .nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .nav-item.active {
-  @apply text-white shadow-dreamy;
-  background: linear-gradient(135deg, #22D3EE, #06B6D4);
+  @apply text-white;
+  background: #007AFF;
+  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
 }
 
 .btn-primary {
-  @apply text-white font-medium px-6 py-3 rounded-2xl transition-all duration-300 hover:scale-105;
-  background: linear-gradient(135deg, #22D3EE, #06B6D4);
-  box-shadow: 0 4px 20px -2px rgba(34, 211, 238, 0.4);
+  @apply text-white font-medium px-6 py-3 rounded-xl transition-all duration-200 hover:scale-[1.02];
+  background: #007AFF;
+  box-shadow: 0 1px 3px rgba(0, 122, 255, 0.3);
 }
 
 .btn-primary:hover {
-  box-shadow: 0 8px 25px -5px rgba(34, 211, 238, 0.6);
+  background: #0051D5;
 }
 
 .btn-secondary {
-  @apply font-medium px-6 py-3 rounded-2xl hover:scale-105 transition-all duration-300;
+  @apply font-medium px-6 py-3 rounded-xl hover:scale-[1.02] transition-all duration-200;
+  background: rgba(0, 0, 0, 0.05);
+  color: #1D1D1F;
 }
 
-.light .btn-secondary {
-  @apply bg-white/70 text-gray-700 hover:bg-white/90 shadow-soft;
+.dark .btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: #F5F5F7;
 }
 
-body:not(.light) .btn-secondary {
-  background: rgba(34, 211, 238, 0.1);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(34, 211, 238, 0.2);
-  color: white;
-}
-
-body:not(.light) .btn-secondary:hover {
-  background: rgba(34, 211, 238, 0.2);
-}
-
-/* Enhanced status badges */
+/* Status badges - Apple style */
 .status-active {
-  @apply bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-full px-3 py-1 text-xs font-medium;
+  @apply bg-green-100 text-green-800 border border-green-200 rounded-full px-3 py-1 text-xs font-medium;
 }
 
 .status-inactive {
-  @apply bg-rose-100 text-rose-700 border border-rose-200 rounded-full px-3 py-1 text-xs font-medium;
+  @apply bg-red-100 text-red-800 border border-red-200 rounded-full px-3 py-1 text-xs font-medium;
 }
 
 .status-pending {
-  @apply bg-amber-100 text-amber-700 border border-amber-200 rounded-full px-3 py-1 text-xs font-medium;
+  @apply bg-orange-100 text-orange-800 border border-orange-200 rounded-full px-3 py-1 text-xs font-medium;
 }
 
-body:not(.light) .status-active {
-  @apply bg-emerald-500/20 text-emerald-400 border-emerald-500/30;
+.dark .status-active {
+  @apply bg-green-900/30 text-green-400 border-green-800;
 }
 
-body:not(.light) .status-inactive {
-  @apply bg-rose-500/20 text-rose-400 border-rose-500/30;
+.dark .status-inactive {
+  @apply bg-red-900/30 text-red-400 border-red-800;
 }
 
-body:not(.light) .status-pending {
-  @apply bg-amber-500/20 text-amber-400 border-amber-500/30;
+.dark .status-pending {
+  @apply bg-orange-900/30 text-orange-400 border-orange-800;
 }
 
-/* Beautiful card animations */
-.card-hover {
-  @apply transition-all duration-300 hover:scale-105;
-}
-
-.card-hover:hover {
-  @apply shadow-dreamy;
-}
-
-/* Enhanced loading animations */
-@keyframes shimmer {
-  0% { background-position: -200px 0; }
-  100% { background-position: calc(200px + 100%) 0; }
-}
-
-.loading-shimmer {
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-  background-size: 200px 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-.light .loading-shimmer {
-  background: linear-gradient(90deg, transparent, rgba(0,0,0,0.05), transparent);
-}
-
-/* Theme transition */
+/* Smooth transitions */
 * {
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }

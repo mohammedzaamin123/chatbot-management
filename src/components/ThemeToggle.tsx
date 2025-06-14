@@ -12,10 +12,10 @@ export const ThemeToggle: React.FC = () => {
     setTheme(newTheme);
     
     // Apply theme to document
-    if (newTheme === 'light') {
-      document.documentElement.classList.add('light');
+    if (newTheme === 'dark') {
+      document.documentElement.classList.add('dark');
     } else {
-      document.documentElement.classList.remove('light');
+      document.documentElement.classList.remove('dark');
     }
   };
 
@@ -24,7 +24,7 @@ export const ThemeToggle: React.FC = () => {
       variant="outline"
       size="sm"
       onClick={toggleTheme}
-      className="glass border-white/20 hover:scale-105 transition-all duration-300 w-10 h-10 p-0"
+      className="glass border-apple-gray-200 hover:scale-105 transition-all duration-200 w-10 h-10 p-0"
     >
       {theme === 'light' ? (
         <Moon className="w-4 h-4" />
