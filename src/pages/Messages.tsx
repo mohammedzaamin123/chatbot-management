@@ -1,8 +1,5 @@
-
 import React, { useState } from 'react';
-import { motion } from '
-
-framer-motion';
+import { motion } from 'framer-motion';
 import { MessageSquare, Filter, Star, Tag, User, Send, Phone, Video } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';

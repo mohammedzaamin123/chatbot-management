@@ -11,7 +11,7 @@ interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const { sidebarColl apsed, initializeSampleData } = useStore();
+  const { sidebarCollapsed, initializeSampleData } = useStore();
 
   useEffect(() => {
     // Initialize sample data on first load
