@@ -162,19 +162,15 @@
 }
 
 .apple-button-primary {
-  @apply apple-button bg-apple-blue text-white hover:bg-apple-blue-dark;
+  @apply apple-button bg-primary text-primary-foreground hover:bg-primary/90;
 }
 
 .apple-button-secondary {
-  @apply apple-button bg-apple-gray-100 text-apple-gray-900 hover:bg-apple-gray-200;
-}
-
-.dark .apple-button-secondary {
-  @apply bg-apple-gray-800 text-white hover:bg-apple-gray-700;
+  @apply apple-button bg-secondary text-secondary-foreground hover:bg-secondary/80;
 }
 
 .apple-input {
-  @apply px-3 py-2 rounded-apple border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-apple-blue focus:border-transparent transition-all duration-200;
+  @apply px-3 py-2 rounded-apple border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all duration-200;
 }
 
 .nav-item {
@@ -186,7 +182,7 @@
 }
 
 .metric-card {
-  @apply glass-strong border border-border/50 rounded-apple shadow-lg;
+  @apply bg-card border border-border rounded-apple shadow-apple;
 }
 
 .btn-primary {
@@ -195,15 +191,15 @@
 
 /* Status indicators */
 .status-active {
-  @apply bg-apple-green/10 text-apple-green border border-apple-green/20 rounded-full px-2 py-1 text-xs font-medium;
+  @apply bg-green-500/10 text-green-600 border border-green-500/20 rounded-full px-2 py-1 text-xs font-medium;
 }
 
 .status-inactive {
-  @apply bg-apple-red/10 text-apple-red border border-apple-red/20 rounded-full px-2 py-1 text-xs font-medium;
+  @apply bg-red-500/10 text-red-600 border border-red-500/20 rounded-full px-2 py-1 text-xs font-medium;
 }
 
 .status-pending {
-  @apply bg-apple-orange/10 text-apple-orange border border-apple-orange/20 rounded-full px-2 py-1 text-xs font-medium;
+  @apply bg-orange-500/10 text-orange-600 border border-orange-500/20 rounded-full px-2 py-1 text-xs font-medium;
 }
 
 .neon-text {

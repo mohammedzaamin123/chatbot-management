@@ -52,30 +52,6 @@ export default {
 				card: {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
-				},
-				// Apple-inspired color palette
-				apple: {
-					blue: '#007AFF',
-					'blue-light': '#5AC8FA',
-					'blue-dark': '#0051D5',
-					gray: {
-						50: '#F2F2F7',
-						100: '#E5E5EA',
-						200: '#D1D1D6',
-						300: '#C7C7CC',
-						400: '#AEAEB2',
-						500: '#8E8E93',
-						600: '#636366',
-						700: '#48484A',
-						800: '#3A3A3C',
-						900: '#1C1C1E',
-					},
-					green: '#34C759',
-					orange: '#FF9500',
-					red: '#FF3B30',
-					purple: '#AF52DE',
-					pink: '#FF2D92',
-					yellow: '#FFCC00',
 				}
 			},
 			borderRadius: {
