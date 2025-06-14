@@ -11,15 +11,22 @@ interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const { sidebarCollapsed, initializeSampleData } = useStore();
+  const { sidebarCollapsed, initializeSampleData, theme } = useStore();
 
   useEffect(() => {
     // Initialize sample data on first load
     initializeSampleData();
-  }, [initializeSampleData]);
+    
+    // Initialize theme
+    if (theme === 'light') {
+      document.documentElement.classList.add('light');
+    } else {
+      document.documentElement.classList.remove('light');
+    }
+  }, [initializeSampleData, theme]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex">
+    <div className="min-h-screen bg-background text-foreground flex transition-colors duration-300">
       <Sidebar />
       
       <div className={`flex-1 flex flex-col transition-all duration-300 ${

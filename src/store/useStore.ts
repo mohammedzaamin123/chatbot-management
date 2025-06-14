@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -105,6 +104,9 @@ interface AppStore {
   currentView: string;
   loading: boolean;
   
+  // Theme
+  theme: 'light' | 'dark';
+  
   // Analytics
   analytics: {
     totalMessages: number;
@@ -121,6 +123,7 @@ interface AppStore {
   setSidebarCollapsed: (collapsed: boolean) => void;
   setCurrentView: (view: string) => void;
   setLoading: (loading: boolean) => void;
+  setTheme: (theme: 'light' | 'dark') => void;
   
   // CRUD Operations
   addChatbot: (chatbot: Omit<Chatbot, 'id' | 'created_at'>) => void;
@@ -168,6 +171,7 @@ export const useStore = create<AppStore>()(
       sidebarCollapsed: false,
       currentView: 'dashboard',
       loading: false,
+      theme: 'dark',
       analytics: {
         totalMessages: 0,
         totalPosts: 0,
@@ -183,6 +187,7 @@ export const useStore = create<AppStore>()(
       setSidebarCollapsed: (sidebarCollapsed) => set({ sidebarCollapsed }),
       setCurrentView: (currentView) => set({ currentView }),
       setLoading: (loading) => set({ loading }),
+      setTheme: (theme) => set({ theme }),
       
       // Chatbot CRUD
       addChatbot: (chatbot) => set((state) => ({
@@ -433,7 +438,8 @@ export const useStore = create<AppStore>()(
         user: state.user,
         isAuthenticated: state.isAuthenticated,
         currentTenant: state.currentTenant,
-        sidebarCollapsed: state.sidebarCollapsed
+        sidebarCollapsed: state.sidebarCollapsed,
+        theme: state.theme
       })
     }
   )
