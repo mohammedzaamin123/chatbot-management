@@ -220,7 +220,14 @@ body:not(.light) .nav-item:hover {
 }
 
 body:not(.light) .btn-secondary {
-  @apply glass text-white hover:bg-white/20;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+body:not(.light) .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 /* Enhanced status badges */
