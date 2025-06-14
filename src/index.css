@@ -15,7 +15,7 @@
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 262 83% 58%;
+    --primary: 188 94% 67%;
     --primary-foreground: 210 40% 98%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -27,7 +27,7 @@
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 262.1 83.3% 57.8%;
+    --ring: 188 94% 67%;
     --radius: 0.75rem;
   }
 
@@ -39,7 +39,7 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 262 83% 58%;
+    --primary: 188 94% 67%;
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 98%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -51,7 +51,7 @@
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 262.1 83.3% 57.8%;
+    --ring: 188 94% 67%;
   }
 }
 
@@ -68,17 +68,17 @@
   /* Light mode background */
   .light body {
     background: 
-      radial-gradient(ellipse at top left, rgba(232, 213, 255, 0.3) 0%, transparent 50%),
-      radial-gradient(ellipse at top right, rgba(255, 214, 232, 0.3) 0%, transparent 50%),
-      radial-gradient(ellipse at bottom, rgba(212, 244, 221, 0.3) 0%, transparent 50%),
+      radial-gradient(ellipse at top left, rgba(34, 211, 238, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at top right, rgba(165, 243, 252, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at bottom, rgba(186, 230, 253, 0.15) 0%, transparent 50%),
       #FEFEFE;
   }
 
   /* Dark mode background */
   body:not(.light) {
     background: 
-      radial-gradient(ellipse at top, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
-      radial-gradient(ellipse at bottom, rgba(52, 211, 153, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at top, rgba(34, 211, 238, 0.1) 0%, transparent 50%),
+      radial-gradient(ellipse at bottom, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
       #0a0a0a;
   }
 
@@ -97,12 +97,12 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #A855F7, #F472B6);
+    background: linear-gradient(180deg, #22D3EE, #06B6D4);
     border-radius: 4px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, #9333EA, #EC4899);
+    background: linear-gradient(180deg, #0891B2, #0E7490);
   }
 
   /* Glass morphism utility classes */
@@ -138,7 +138,7 @@
 
   /* Enhanced neon effects */
   .neon-text {
-    background: linear-gradient(135deg, #A855F7, #F472B6, #34D399);
+    background: linear-gradient(135deg, #22D3EE, #06B6D4, #0891B2);
     background-size: 200% 200%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -147,7 +147,7 @@
   }
 
   .light .neon-text {
-    background: linear-gradient(135deg, #7C3AED, #DB2777, #059669);
+    background: linear-gradient(135deg, #0891B2, #0E7490, #164E63);
     background-size: 200% 200%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -198,17 +198,17 @@ body:not(.light) .nav-item:hover {
 
 .nav-item.active {
   @apply text-white shadow-dreamy;
-  background: linear-gradient(135deg, #A855F7, #F472B6);
+  background: linear-gradient(135deg, #22D3EE, #06B6D4);
 }
 
 .btn-primary {
   @apply text-white font-medium px-6 py-3 rounded-2xl transition-all duration-300 hover:scale-105;
-  background: linear-gradient(135deg, #A855F7, #F472B6);
-  box-shadow: 0 4px 20px -2px rgba(168, 85, 247, 0.4);
+  background: linear-gradient(135deg, #22D3EE, #06B6D4);
+  box-shadow: 0 4px 20px -2px rgba(34, 211, 238, 0.4);
 }
 
 .btn-primary:hover {
-  box-shadow: 0 8px 25px -5px rgba(168, 85, 247, 0.6);
+  box-shadow: 0 8px 25px -5px rgba(34, 211, 238, 0.6);
 }
 
 .btn-secondary {
@@ -220,14 +220,14 @@ body:not(.light) .nav-item:hover {
 }
 
 body:not(.light) .btn-secondary {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(34, 211, 238, 0.1);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(34, 211, 238, 0.2);
   color: white;
 }
 
 body:not(.light) .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(34, 211, 238, 0.2);
 }
 
 /* Enhanced status badges */

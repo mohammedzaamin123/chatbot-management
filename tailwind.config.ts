@@ -52,25 +52,25 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				// Beautiful pastel colors
+				// Beautiful teal/cyan theme
 				pastel: {
-					purple: '#E8D5FF',
-					lavender: '#F0E6FF',
-					pink: '#FFD6E8',
-					peach: '#FFE0CC',
-					mint: '#D4F4DD',
-					sky: '#CCE7FF',
-					cream: '#FFF9E6',
-					coral: '#FFE4D6'
+					cyan: '#E0F7FA',
+					teal: '#E0F2F1',
+					aqua: '#E1F5FE',
+					mint: '#E8F5E8',
+					sky: '#E3F2FD',
+					pearl: '#F8F9FA',
+					ice: '#F0F9FF',
+					frost: '#ECFDF5'
 				},
-				// Enhanced neon colors for dark mode
+				// Enhanced cyan colors for dark mode
 				neon: {
-					purple: '#A855F7',
-					yellow: '#FCD34D',
-					green: '#34D399',
-					magenta: '#F472B6',
 					cyan: '#22D3EE',
-					orange: '#FB923C'
+					teal: '#06B6D4',
+					aqua: '#0891B2',
+					turquoise: '#14B8A6',
+					mint: '#10B981',
+					sky: '#0EA5E9'
 				},
 				// Glass effect colors
 				glass: {
@@ -84,22 +84,22 @@ export default {
 				'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
 				// Light mode gradients
 				'light-gradient': 'linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%)',
-				'pastel-gradient': 'linear-gradient(135deg, #E8D5FF 0%, #F0E6FF 25%, #FFD6E8 50%, #D4F4DD 75%, #CCE7FF 100%)',
+				'pastel-gradient': 'linear-gradient(135deg, #E0F7FA 0%, #E0F2F1 25%, #E1F5FE 50%, #E8F5E8 75%, #E3F2FD 100%)',
 				// Dark mode gradients
-				'neon-gradient': 'linear-gradient(135deg, #A855F7 0%, #F472B6 50%, #34D399 100%)',
+				'neon-gradient': 'linear-gradient(135deg, #22D3EE 0%, #06B6D4 50%, #0891B2 100%)',
 				'glass-gradient': 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%)',
 				// Mesh gradients
-				'mesh-light': 'radial-gradient(at 40% 20%, #E8D5FF 0px, transparent 50%), radial-gradient(at 80% 0%, #FFD6E8 0px, transparent 50%), radial-gradient(at 0% 50%, #D4F4DD 0px, transparent 50%)',
-				'mesh-dark': 'radial-gradient(at 40% 20%, rgba(168, 85, 247, 0.3) 0px, transparent 50%), radial-gradient(at 80% 0%, rgba(244, 114, 182, 0.3) 0px, transparent 50%), radial-gradient(at 0% 50%, rgba(52, 211, 153, 0.3) 0px, transparent 50%)'
+				'mesh-light': 'radial-gradient(at 40% 20%, #E0F7FA 0px, transparent 50%), radial-gradient(at 80% 0%, #E1F5FE 0px, transparent 50%), radial-gradient(at 0% 50%, #E8F5E8 0px, transparent 50%)',
+				'mesh-dark': 'radial-gradient(at 40% 20%, rgba(34, 211, 238, 0.3) 0px, transparent 50%), radial-gradient(at 80% 0%, rgba(6, 182, 212, 0.3) 0px, transparent 50%), radial-gradient(at 0% 50%, rgba(8, 145, 178, 0.3) 0px, transparent 50%)'
 			},
 			boxShadow: {
 				'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
-				'dreamy': '0 8px 25px -5px rgba(168, 85, 247, 0.3), 0 8px 25px -5px rgba(244, 114, 182, 0.2)',
-				'pastel': '0 4px 20px -2px rgba(168, 85, 247, 0.15)',
-				'neon': '0 0 20px rgba(168, 85, 247, 0.4)',
-				'neon-strong': '0 0 40px rgba(168, 85, 247, 0.6)',
+				'dreamy': '0 8px 25px -5px rgba(34, 211, 238, 0.3), 0 8px 25px -5px rgba(6, 182, 212, 0.2)',
+				'pastel': '0 4px 20px -2px rgba(34, 211, 238, 0.15)',
+				'neon': '0 0 20px rgba(34, 211, 238, 0.4)',
+				'neon-strong': '0 0 40px rgba(34, 211, 238, 0.6)',
 				'glass': '0 8px 32px rgba(31, 38, 135, 0.37)',
-				'glow': '0 0 20px rgba(52, 211, 153, 0.4)'
+				'glow': '0 0 20px rgba(34, 211, 238, 0.4)'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -152,10 +152,10 @@ export default {
 				},
 				'glow': {
 					'0%, 100%': {
-						boxShadow: '0 0 20px rgba(139, 92, 246, 0.3)'
+						boxShadow: '0 0 20px rgba(34, 211, 238, 0.3)'
 					},
 					'50%': {
-						boxShadow: '0 0 40px rgba(139, 92, 246, 0.6)'
+						boxShadow: '0 0 40px rgba(34, 211, 238, 0.6)'
 					}
 				},
 				'float': {
