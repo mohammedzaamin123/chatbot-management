@@ -1,22 +1,18 @@
+
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  Sparkles, 
-  Image, 
-  Video, 
-  FileText, 
-  Download, 
-  Share2,
-  Palette,
-  Wand2,
-  Upload,
-  Calendar,
   Brain,
   MessageSquare,
   CheckCircle,
   XCircle,
+  Calendar,
+  Bot,
   Send,
-  Bot
+  Sparkles,
+  TrendingUp,
+  Settings,
+  Plus
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -27,9 +23,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 
 export const Content: React.FC = () => {
-  const [selectedType, setSelectedType] = useState('business-ai');
+  const [activeTab, setActiveTab] = useState('business-ai');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedContent, setGeneratedContent] = useState(null);
   const [businessInfo, setBusinessInfo] = useState('');
   const [customPrompt, setCustomPrompt] = useState('');
   const [pendingPosts, setPendingPosts] = useState([
@@ -53,164 +48,141 @@ export const Content: React.FC = () => {
     }
   ]);
 
-  const contentTypes = [
-    { id: 'business-ai', label: 'Business AI Learning', icon: Brain, color: 'from-purple-500 to-indigo-500' },
-    { id: 'custom-prompt', label: 'Custom Prompt Creation', icon: MessageSquare, color: 'from-blue-500 to-cyan-500' },
-    { id: 'poster', label: 'Social Media Poster', icon: Image, color: 'from-pink-500 to-purple-500' },
-    { id: 'video', label: 'Video Content', icon: Video, color: 'from-green-500 to-emerald-500' }
-  ];
-
   const handleBusinessAIGenerate = async () => {
+    if (!businessInfo.trim()) return;
+    
     setIsGenerating(true);
-    // Simulate AI learning and generating content
     setTimeout(() => {
-      setGeneratedContent({
+      const newPost = {
+        id: Date.now(),
         type: 'business-ai',
         title: 'AI-Generated Business Content',
-        content: `Based on your business information: "${businessInfo.substring(0, 50)}...", I've created content that aligns with your brand voice and industry trends.`,
-        preview: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=400&fit=crop'
-      });
+        content: `AI learned from: "${businessInfo.substring(0, 50)}..." and created relevant content.`,
+        platform: 'LinkedIn',
+        scheduledFor: new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleString(),
+        status: 'pending'
+      };
+      setPendingPosts(prev => [newPost, ...prev]);
       setIsGenerating(false);
+      setBusinessInfo('');
     }, 3000);
   };
 
   const handleCustomPromptGenerate = async () => {
+    if (!customPrompt.trim()) return;
+    
     setIsGenerating(true);
-    // Simulate custom prompt processing
     setTimeout(() => {
-      setGeneratedContent({
+      const newPost = {
+        id: Date.now(),
         type: 'custom-prompt',
         title: 'Custom Prompt Generated Content',
-        content: `Content generated from your custom prompt: "${customPrompt.substring(0, 50)}..."`,
-        preview: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=400&fit=crop'
-      });
+        content: `Generated from: "${customPrompt.substring(0, 50)}..."`,
+        platform: 'Twitter',
+        scheduledFor: new Date(Date.now() + 12 * 60 * 60 * 1000).toLocaleString(),
+        status: 'pending'
+      };
+      setPendingPosts(prev => [newPost, ...prev]);
       setIsGenerating(false);
+      setCustomPrompt('');
     }, 2000);
   };
 
   const handleApprovePost = (postId: number) => {
-    setPendingPosts(prev => prev.map(post => 
-      post.id === postId ? { ...post, status: 'approved' } : post
-    ));
+    setPendingPosts(prev => prev.filter(post => post.id !== postId));
   };
 
   const handleRejectPost = (postId: number) => {
     setPendingPosts(prev => prev.filter(post => post.id !== postId));
   };
 
-  const recentContent = [
-    {
-      id: 1,
-      type: 'poster',
-      title: 'AI Technology Post',
-      preview: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=300&h=200&fit=crop',
-      created: '2 hours ago'
-    },
-    {
-      id: 2,
-      type: 'video',
-      title: 'Product Demo Reel',
-      preview: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=300&h=200&fit=crop',
-      created: '1 day ago'
-    },
-    {
-      id: 3,
-      type: 'blog',
-      title: 'Future of AI in Business',
-      preview: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=300&h=200&fit=crop',
-      created: '2 days ago'
-    }
-  ];
-
   return (
-    <div className="space-y-8">
-      {/* Header */}
+    <div className="space-y-8 max-w-7xl mx-auto p-6">
+      {/* Header Section */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6"
+        className="text-center space-y-4"
       >
-        <div>
-          <h1 className="text-4xl font-bold neon-text mb-2">
-            AI Content Creator ✨
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            Generate stunning content with the power of AI
-          </p>
-        </div>
-        
-        <div className="flex gap-4">
-          <Button variant="outline" className="glass border-white/20">
-            <Palette className="w-4 h-4 mr-2" />
-            Brand Kit
-          </Button>
-          <Button className="btn-primary">
-            <Upload className="w-4 h-4 mr-2" />
-            Upload Assets
-          </Button>
-        </div>
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+          AI Content Manager
+        </h1>
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          Let AI learn your business and create personalized content, or use custom prompts for specific needs
+        </p>
       </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Content Creator */}
-        <div className="lg:col-span-2 space-y-6">
-          <Card className="glass-strong border-white/10">
+        {/* Main Content Creation Area */}
+        <div className="lg:col-span-2">
+          <Card className="glass border-white/10">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Wand2 className="w-5 h-5" />
-                Create New Content
+                <Sparkles className="w-5 h-5 text-purple-400" />
+                Create Content
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Tabs value={selectedType} onValueChange={setSelectedType}>
-                <TabsList className="grid w-full grid-cols-4 glass">
-                  {contentTypes.map((type) => (
-                    <TabsTrigger 
-                      key={type.id} 
-                      value={type.id}
-                      className="data-[state=active]:bg-neon-gradient flex flex-col items-center gap-1 p-3"
-                    >
-                      <type.icon className="w-4 h-4" />
-                      <span className="text-xs">{type.label.split(' ')[0]}</span>
-                    </TabsTrigger>
-                  ))}
+              <Tabs value={activeTab} onValueChange={setActiveTab}>
+                <TabsList className="grid w-full grid-cols-2 mb-6">
+                  <TabsTrigger 
+                    value="business-ai" 
+                    className="flex items-center gap-2 data-[state=active]:bg-purple-500/20"
+                  >
+                    <Brain className="w-4 h-4" />
+                    Business AI Learning
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="custom-prompt"
+                    className="flex items-center gap-2 data-[state=active]:bg-blue-500/20"
+                  >
+                    <MessageSquare className="w-4 h-4" />
+                    Custom Prompts
+                  </TabsTrigger>
                 </TabsList>
 
                 {/* Business AI Learning Tab */}
-                <TabsContent value="business-ai" className="space-y-6 mt-6">
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="space-y-4"
-                  >
-                    <div className="bg-gradient-to-r from-purple-500/10 to-indigo-500/10 p-4 rounded-lg border border-purple-500/20">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Bot className="w-5 h-5 text-purple-400" />
-                        <h3 className="font-semibold text-purple-400">Business AI Learning</h3>
+                <TabsContent value="business-ai" className="space-y-6">
+                  <div className="bg-gradient-to-r from-purple-500/10 to-indigo-500/10 p-6 rounded-lg border border-purple-500/20">
+                    <div className="flex items-start gap-4">
+                      <Bot className="w-8 h-8 text-purple-400 mt-1" />
+                      <div>
+                        <h3 className="text-lg font-semibold text-purple-400 mb-2">
+                          Step 1: Teach AI About Your Business
+                        </h3>
+                        <p className="text-sm text-muted-foreground mb-4">
+                          Share details about your business, industry, target audience, and brand voice. 
+                          AI will learn and create content that matches your brand perfectly.
+                        </p>
+                        <div className="flex flex-wrap gap-2 text-xs">
+                          <span className="bg-purple-500/20 text-purple-300 px-2 py-1 rounded">Industry</span>
+                          <span className="bg-purple-500/20 text-purple-300 px-2 py-1 rounded">Target Audience</span>
+                          <span className="bg-purple-500/20 text-purple-300 px-2 py-1 rounded">Brand Voice</span>
+                          <span className="bg-purple-500/20 text-purple-300 px-2 py-1 rounded">Products/Services</span>
+                        </div>
                       </div>
-                      <p className="text-sm text-muted-foreground">
-                        Tell our AI about your business, and it will learn to create content that matches your brand voice and industry.
-                      </p>
                     </div>
+                  </div>
 
+                  <div className="space-y-4">
                     <div>
-                      <Label>Tell AI About Your Business</Label>
+                      <Label className="text-base font-medium">Business Information</Label>
                       <Textarea
-                        placeholder="Describe your business, industry, target audience, brand voice, products/services, company values, and any specific topics you want to focus on..."
-                        className="glass border-white/20 h-32"
+                        placeholder="Tell AI about your business: What industry are you in? Who is your target audience? What's your brand voice? What products/services do you offer? What topics should we focus on?"
+                        className="mt-2 h-32 bg-black/20 border-white/20"
                         value={businessInfo}
                         onChange={(e) => setBusinessInfo(e.target.value)}
                       />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <Label>Content Frequency</Label>
-                        <Select>
-                          <SelectTrigger className="glass border-white/20">
-                            <SelectValue placeholder="Daily" />
+                        <Select defaultValue="daily">
+                          <SelectTrigger className="bg-black/20 border-white/20">
+                            <SelectValue />
                           </SelectTrigger>
-                          <SelectContent className="glass border-white/20">
+                          <SelectContent className="bg-gray-900 border-white/20">
                             <SelectItem value="daily">Daily</SelectItem>
                             <SelectItem value="weekly">Weekly</SelectItem>
                             <SelectItem value="bi-weekly">Bi-weekly</SelectItem>
@@ -219,11 +191,11 @@ export const Content: React.FC = () => {
                       </div>
                       <div>
                         <Label>Primary Platform</Label>
-                        <Select>
-                          <SelectTrigger className="glass border-white/20">
-                            <SelectValue placeholder="LinkedIn" />
+                        <Select defaultValue="linkedin">
+                          <SelectTrigger className="bg-black/20 border-white/20">
+                            <SelectValue />
                           </SelectTrigger>
-                          <SelectContent className="glass border-white/20">
+                          <SelectContent className="bg-gray-900 border-white/20">
                             <SelectItem value="linkedin">LinkedIn</SelectItem>
                             <SelectItem value="twitter">Twitter</SelectItem>
                             <SelectItem value="facebook">Facebook</SelectItem>
@@ -234,9 +206,9 @@ export const Content: React.FC = () => {
                     </div>
 
                     <Button 
-                      onClick={handleBusinessAIGenerate} 
+                      onClick={handleBusinessAIGenerate}
                       disabled={isGenerating || !businessInfo.trim()}
-                      className="w-full btn-primary"
+                      className="w-full bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600"
                     >
                       {isGenerating ? (
                         <>
@@ -250,44 +222,50 @@ export const Content: React.FC = () => {
                         </>
                       )}
                     </Button>
-                  </motion.div>
+                  </div>
                 </TabsContent>
 
                 {/* Custom Prompt Tab */}
-                <TabsContent value="custom-prompt" className="space-y-6 mt-6">
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="space-y-4"
-                  >
-                    <div className="bg-gradient-to-r from-blue-500/10 to-cyan-500/10 p-4 rounded-lg border border-blue-500/20">
-                      <div className="flex items-center gap-2 mb-2">
-                        <MessageSquare className="w-5 h-5 text-blue-400" />
-                        <h3 className="font-semibold text-blue-400">Custom Prompt Creation</h3>
+                <TabsContent value="custom-prompt" className="space-y-6">
+                  <div className="bg-gradient-to-r from-blue-500/10 to-cyan-500/10 p-6 rounded-lg border border-blue-500/20">
+                    <div className="flex items-start gap-4">
+                      <MessageSquare className="w-8 h-8 text-blue-400 mt-1" />
+                      <div>
+                        <h3 className="text-lg font-semibold text-blue-400 mb-2">
+                          Step 1: Create Custom Content
+                        </h3>
+                        <p className="text-sm text-muted-foreground mb-4">
+                          Write specific prompts to generate exactly the content you need. 
+                          Perfect for one-off posts, campaigns, or unique content requirements.
+                        </p>
+                        <div className="flex flex-wrap gap-2 text-xs">
+                          <span className="bg-blue-500/20 text-blue-300 px-2 py-1 rounded">Specific Topics</span>
+                          <span className="bg-blue-500/20 text-blue-300 px-2 py-1 rounded">Custom Tone</span>
+                          <span className="bg-blue-500/20 text-blue-300 px-2 py-1 rounded">Targeted Content</span>
+                        </div>
                       </div>
-                      <p className="text-sm text-muted-foreground">
-                        Create specific content using custom prompts tailored to your exact needs.
-                      </p>
                     </div>
+                  </div>
 
+                  <div className="space-y-4">
                     <div>
-                      <Label>Custom Prompt</Label>
+                      <Label className="text-base font-medium">Custom Prompt</Label>
                       <Textarea
-                        placeholder="Write a detailed prompt for the content you want to create. Be specific about tone, style, key points, and target audience..."
-                        className="glass border-white/20 h-24"
+                        placeholder="Write a detailed prompt: What type of content do you want? What tone should it have? What key points should be included? Who is the target audience?"
+                        className="mt-2 h-24 bg-black/20 border-white/20"
                         value={customPrompt}
                         onChange={(e) => setCustomPrompt(e.target.value)}
                       />
                     </div>
 
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
                         <Label>Content Type</Label>
-                        <Select>
-                          <SelectTrigger className="glass border-white/20">
-                            <SelectValue placeholder="Social Post" />
+                        <Select defaultValue="social">
+                          <SelectTrigger className="bg-black/20 border-white/20">
+                            <SelectValue />
                           </SelectTrigger>
-                          <SelectContent className="glass border-white/20">
+                          <SelectContent className="bg-gray-900 border-white/20">
                             <SelectItem value="social">Social Post</SelectItem>
                             <SelectItem value="blog">Blog Article</SelectItem>
                             <SelectItem value="email">Email Content</SelectItem>
@@ -297,11 +275,11 @@ export const Content: React.FC = () => {
                       </div>
                       <div>
                         <Label>Tone</Label>
-                        <Select>
-                          <SelectTrigger className="glass border-white/20">
-                            <SelectValue placeholder="Professional" />
+                        <Select defaultValue="professional">
+                          <SelectTrigger className="bg-black/20 border-white/20">
+                            <SelectValue />
                           </SelectTrigger>
-                          <SelectContent className="glass border-white/20">
+                          <SelectContent className="bg-gray-900 border-white/20">
                             <SelectItem value="professional">Professional</SelectItem>
                             <SelectItem value="casual">Casual</SelectItem>
                             <SelectItem value="friendly">Friendly</SelectItem>
@@ -311,11 +289,11 @@ export const Content: React.FC = () => {
                       </div>
                       <div>
                         <Label>Length</Label>
-                        <Select>
-                          <SelectTrigger className="glass border-white/20">
-                            <SelectValue placeholder="Medium" />
+                        <Select defaultValue="medium">
+                          <SelectTrigger className="bg-black/20 border-white/20">
+                            <SelectValue />
                           </SelectTrigger>
-                          <SelectContent className="glass border-white/20">
+                          <SelectContent className="bg-gray-900 border-white/20">
                             <SelectItem value="short">Short</SelectItem>
                             <SelectItem value="medium">Medium</SelectItem>
                             <SelectItem value="long">Long</SelectItem>
@@ -325,9 +303,9 @@ export const Content: React.FC = () => {
                     </div>
 
                     <Button 
-                      onClick={handleCustomPromptGenerate} 
+                      onClick={handleCustomPromptGenerate}
                       disabled={isGenerating || !customPrompt.trim()}
-                      className="w-full btn-primary"
+                      className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600"
                     >
                       {isGenerating ? (
                         <>
@@ -336,266 +314,73 @@ export const Content: React.FC = () => {
                         </>
                       ) : (
                         <>
-                          <MessageSquare className="w-4 h-4 mr-2" />
+                          <Send className="w-4 h-4 mr-2" />
                           Generate Custom Content
                         </>
                       )}
                     </Button>
-                  </motion.div>
-                </TabsContent>
-
-                <TabsContent value="poster" className="space-y-6 mt-6">
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="space-y-4"
-                  >
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label>Content Topic</Label>
-                        <Input
-                          placeholder="AI technology trends"
-                          className="glass border-white/20"
-                        />
-                      </div>
-                      <div>
-                        <Label>Style/Tone</Label>
-                        <Select>
-                          <SelectTrigger className="glass border-white/20">
-                            <SelectValue placeholder="Select style" />
-                          </SelectTrigger>
-                          <SelectContent className="glass border-white/20">
-                            <SelectItem value="professional">Professional</SelectItem>
-                            <SelectItem value="casual">Casual</SelectItem>
-                            <SelectItem value="creative">Creative</SelectItem>
-                            <SelectItem value="minimalist">Minimalist</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label>Content Description</Label>
-                      <Textarea
-                        placeholder="Describe what you want to create..."
-                        className="glass border-white/20 h-24"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-4">
-                      <div>
-                        <Label>Dimensions</Label>
-                        <Select>
-                          <SelectTrigger className="glass border-white/20">
-                            <SelectValue placeholder="1080x1080" />
-                          </SelectTrigger>
-                          <SelectContent className="glass border-white/20">
-                            <SelectItem value="square">1080x1080 (Square)</SelectItem>
-                            <SelectItem value="story">1080x1920 (Story)</SelectItem>
-                            <SelectItem value="landscape">1200x630 (Landscape)</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label>Color Scheme</Label>
-                        <Select>
-                          <SelectTrigger className="glass border-white/20">
-                            <SelectValue placeholder="Neon" />
-                          </SelectTrigger>
-                          <SelectContent className="glass border-white/20">
-                            <SelectItem value="neon">Neon</SelectItem>
-                            <SelectItem value="pastel">Pastel</SelectItem>
-                            <SelectItem value="monochrome">Monochrome</SelectItem>
-                            <SelectItem value="brand">Brand Colors</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label>Add Logo</Label>
-                        <Select>
-                          <SelectTrigger className="glass border-white/20">
-                            <SelectValue placeholder="Yes" />
-                          </SelectTrigger>
-                          <SelectContent className="glass border-white/20">
-                            <SelectItem value="yes">Yes</SelectItem>
-                            <SelectItem value="no">No</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
-                    <Button 
-                      onClick={() => {}} 
-                      disabled={isGenerating}
-                      className="w-full btn-primary"
-                    >
-                      <Sparkles className="w-4 h-4 mr-2" />
-                      Generate Poster
-                    </Button>
-                  </motion.div>
-                </TabsContent>
-
-                <TabsContent value="video" className="space-y-6 mt-6">
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="space-y-4"
-                  >
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label>Content Topic</Label>
-                        <Input
-                          placeholder="AI technology trends"
-                          className="glass border-white/20"
-                        />
-                      </div>
-                      <div>
-                        <Label>Style/Tone</Label>
-                        <Select>
-                          <SelectTrigger className="glass border-white/20">
-                            <SelectValue placeholder="Select style" />
-                          </SelectTrigger>
-                          <SelectContent className="glass border-white/20">
-                            <SelectItem value="professional">Professional</SelectItem>
-                            <SelectItem value="casual">Casual</SelectItem>
-                            <SelectItem value="creative">Creative</SelectItem>
-                            <SelectItem value="minimalist">Minimalist</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label>Content Description</Label>
-                      <Textarea
-                        placeholder="Describe what you want to create..."
-                        className="glass border-white/20 h-24"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label>Duration</Label>
-                        <Select>
-                          <SelectTrigger className="glass border-white/20">
-                            <SelectValue placeholder="15 seconds" />
-                          </SelectTrigger>
-                          <SelectContent className="glass border-white/20">
-                            <SelectItem value="15">15 seconds</SelectItem>
-                            <SelectItem value="30">30 seconds</SelectItem>
-                            <SelectItem value="60">1 minute</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label>Video Style</Label>
-                        <Select>
-                          <SelectTrigger className="glass border-white/20">
-                            <SelectValue placeholder="Motion Graphics" />
-                          </SelectTrigger>
-                          <SelectContent className="glass border-white/20">
-                            <SelectItem value="motion">Motion Graphics</SelectItem>
-                            <SelectItem value="slideshow">Slideshow</SelectItem>
-                            <SelectItem value="animated">Animated</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
-                    <Button 
-                      onClick={() => {}} 
-                      disabled={isGenerating}
-                      className="w-full btn-primary"
-                    >
-                      <Sparkles className="w-4 h-4 mr-2" />
-                      Generate Video
-                    </Button>
-                  </motion.div>
+                  </div>
                 </TabsContent>
               </Tabs>
             </CardContent>
           </Card>
+        </div>
 
-          {/* Generated Content Preview */}
-          {generatedContent && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-            >
-              <Card className="glass-strong border-white/10">
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>Generated Content - Pending Approval</span>
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline" className="glass border-white/20">
-                        <Download className="w-4 h-4" />
-                      </Button>
-                      <Button size="sm" variant="outline" className="glass border-white/20">
-                        <Share2 className="w-4 h-4" />
-                      </Button>
-                      <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white">
-                        <CheckCircle className="w-4 h-4 mr-2" />
-                        Approve & Schedule
-                      </Button>
-                    </div>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="aspect-video bg-gray-900 rounded-lg overflow-hidden mb-4">
-                    <img 
-                      src={generatedContent.preview} 
-                      alt="Generated content"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="font-semibold">{generatedContent.title}</h3>
-                    <p className="text-sm text-muted-foreground">{generatedContent.content}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
-
-          {/* Pending Posts for Approval */}
-          {pendingPosts.length > 0 && (
-            <Card className="glass-strong border-white/10">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5" />
-                  Posts Pending Approval
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {pendingPosts.map((post) => (
+        {/* Sidebar - Approval Queue */}
+        <div className="space-y-6">
+          {/* Pending Approval Section */}
+          <Card className="glass border-white/10">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <span className="flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-yellow-400" />
+                  Step 2: Review & Approve
+                </span>
+                <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full text-xs font-medium">
+                  {pendingPosts.length} pending
+                </span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {pendingPosts.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <MessageSquare className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                  <p>No posts waiting for approval</p>
+                  <p className="text-sm">Generate content to see it here</p>
+                </div>
+              ) : (
+                pendingPosts.map((post) => (
                   <motion.div
                     key={post.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="flex items-center justify-between p-4 glass rounded-lg border border-white/10"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-4 bg-black/20 rounded-lg border border-white/10 space-y-3"
                   >
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          post.type === 'business-ai' 
-                            ? 'bg-purple-500/20 text-purple-400' 
-                            : 'bg-blue-500/20 text-blue-400'
-                        }`}>
-                          {post.type === 'business-ai' ? 'AI Generated' : 'Custom Prompt'}
-                        </span>
-                        <span className="text-xs text-muted-foreground">{post.platform}</span>
-                      </div>
-                      <h4 className="font-medium text-sm">{post.title}</h4>
-                      <p className="text-xs text-muted-foreground mt-1">{post.content}</p>
-                      <p className="text-xs text-muted-foreground mt-2">📅 {post.scheduledFor}</p>
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        post.type === 'business-ai' 
+                          ? 'bg-purple-500/20 text-purple-400' 
+                          : 'bg-blue-500/20 text-blue-400'
+                      }`}>
+                        {post.type === 'business-ai' ? 'AI Generated' : 'Custom Prompt'}
+                      </span>
+                      <span className="text-xs text-muted-foreground">{post.platform}</span>
                     </div>
-                    <div className="flex gap-2 ml-4">
+                    
+                    <div>
+                      <h4 className="font-medium text-sm mb-1">{post.title}</h4>
+                      <p className="text-xs text-muted-foreground mb-2">{post.content}</p>
+                      <p className="text-xs text-muted-foreground">📅 {post.scheduledFor}</p>
+                    </div>
+                    
+                    <div className="flex gap-2">
                       <Button
                         size="sm"
                         onClick={() => handleApprovePost(post.id)}
-                        className="bg-green-600 hover:bg-green-700 text-white"
+                        className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                       >
-                        <CheckCircle className="w-4 h-4" />
+                        <CheckCircle className="w-4 h-4 mr-1" />
+                        Approve & Post
                       </Button>
                       <Button
                         size="sm"
@@ -607,97 +392,55 @@ export const Content: React.FC = () => {
                       </Button>
                     </div>
                   </motion.div>
-                ))}
-              </CardContent>
-            </Card>
-          )}
-        </div>
-
-        {/* Sidebar */}
-        <div className="space-y-6">
-          {/* Recent Content */}
-          <Card className="glass-strong border-white/10">
-            <CardHeader>
-              <CardTitle>Recent Content</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {recentContent.map((item, index) => (
-                <motion.div
-                  key={item.id}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="flex items-center gap-3 p-3 glass rounded-lg hover:bg-white/5 cursor-pointer"
-                >
-                  <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-800">
-                    <img 
-                      src={item.preview} 
-                      alt={item.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium text-sm truncate">{item.title}</div>
-                    <div className="text-xs text-muted-foreground">{item.created}</div>
-                  </div>
-                </motion.div>
-              ))}
+                ))
+              )}
             </CardContent>
           </Card>
 
-          {/* Content Stats */}
-          <Card className="glass-strong border-white/10">
-            <CardHeader>
-              <CardTitle>Content Stats</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm">This Month</span>
-                <span className="font-bold">47 pieces</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm">Pending Approval</span>
-                <span className="font-bold text-yellow-400">{pendingPosts.length}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm">Auto-Posted</span>
-                <span className="font-bold text-green-400">23</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm">Scheduled</span>
-                <span className="font-bold">12 posts</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Brand Kit */}
-          <Card className="glass-strong border-white/10">
+          {/* Quick Stats */}
+          <Card className="glass border-white/10">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Palette className="w-4 h-4" />
-                Brand Kit
+                <TrendingUp className="w-5 h-5" />
+                Quick Stats
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
-                <Label className="text-xs">Brand Colors</Label>
-                <div className="flex gap-2 mt-2">
-                  <div className="w-8 h-8 bg-purple-500 rounded-lg"></div>
-                  <div className="w-8 h-8 bg-pink-500 rounded-lg"></div>
-                  <div className="w-8 h-8 bg-green-500 rounded-lg"></div>
-                  <div className="w-8 h-8 bg-yellow-500 rounded-lg"></div>
-                </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm">This Month</span>
+                <span className="font-bold">47 posts</span>
               </div>
-              <div>
-                <Label className="text-xs">Fonts</Label>
-                <div className="text-sm mt-2 space-y-1">
-                  <div className="font-manrope">Manrope (Primary)</div>
-                  <div className="font-inter">Inter (Secondary)</div>
-                </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm">Pending Review</span>
+                <span className="font-bold text-yellow-400">{pendingPosts.length}</span>
               </div>
-              <Button size="sm" variant="outline" className="w-full glass border-white/20">
-                <Upload className="w-4 h-4 mr-2" />
-                Upload Logo
+              <div className="flex justify-between items-center">
+                <span className="text-sm">Auto-Posted</span>
+                <span className="font-bold text-green-400">23</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm">Engagement Rate</span>
+                <span className="font-bold text-blue-400">8.5%</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Settings Card */}
+          <Card className="glass border-white/10">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Settings className="w-5 h-5" />
+                Content Settings
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Button size="sm" variant="outline" className="w-full justify-start">
+                <Plus className="w-4 h-4 mr-2" />
+                Brand Guidelines
+              </Button>
+              <Button size="sm" variant="outline" className="w-full justify-start">
+                <Settings className="w-4 h-4 mr-2" />
+                Auto-Post Settings
               </Button>
             </CardContent>
           </Card>
