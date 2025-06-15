@@ -9,14 +9,15 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
-import { useStore } from '../store/useStore';
+import { useStore, DatabaseConnection } from '../store/useStore';
 import { toast } from '@/hooks/use-toast';
-import { DatabaseCollections } from '../components/DatabaseCollections';
+import { DatabaseDetailsDialog } from '../components/DatabaseDetailsDialog';
 
 export const Database: React.FC = () => {
   const { databases, addDatabase, updateDatabase, deleteDatabase } = useStore();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [selectedDatabase, setSelectedDatabase] = useState(null);
+  const [selectedDatabase, setSelectedDatabase] = useState<DatabaseConnection | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     type: 'postgresql',
@@ -40,7 +41,10 @@ export const Database: React.FC = () => {
     });
   };
 
-  const [expandedDatabaseId, setExpandedDatabaseId] = useState<string | null>(null);
+  const handleDatabaseClick = (database: DatabaseConnection) => {
+    setSelectedDatabase(database);
+    setIsDetailsOpen(true);
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -158,13 +162,8 @@ export const Database: React.FC = () => {
             className="w-full"
           >
             <Card
-              className={`bg-card/50 backdrop-blur-xl border border-border/50 rounded-2xl transition-all duration-300 hover:border-border cursor-pointer ${
-                expandedDatabaseId === db.id ? 'ring-2 ring-primary/50 border-primary/50' : ''
-              }`}
-              onClick={(e) => {
-                if ((e.target as HTMLElement).closest('button')) return;
-                setExpandedDatabaseId(expandedDatabaseId === db.id ? null : db.id);
-              }}
+              className="bg-card/50 backdrop-blur-xl border border-border/50 rounded-2xl transition-all duration-300 hover:border-border cursor-pointer hover:shadow-lg"
+              onClick={() => handleDatabaseClick(db)}
             >
               <CardHeader className="pb-4">
                 <div className="flex items-start justify-between">
@@ -209,53 +208,13 @@ export const Database: React.FC = () => {
                     className="flex-1 bg-primary/10 border-primary/20 text-primary hover:bg-primary/20"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setExpandedDatabaseId(expandedDatabaseId === db.id ? null : db.id);
+                      handleDatabaseClick(db);
                     }}
                   >
                     <Eye className="w-4 h-4 mr-1" />
-                    View
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    className="bg-card border-border/50 hover:bg-accent"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toast({ title: 'Synced!', description: `Database "${db.name}" refreshed.` });
-                    }}
-                  >
-                    <RefreshCw className="w-4 h-4" />
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    className="bg-card border-border/50 hover:bg-accent"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toast({ title: 'Info', description: 'Settings page coming soon.' });
-                    }}
-                  >
-                    <Settings className="w-4 h-4" />
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    className="bg-card border-border/50 hover:bg-destructive/10 hover:border-destructive/20 hover:text-destructive"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      deleteDatabase(db.id);
-                      toast({ title: 'Deleted', description: `Database "${db.name}" deleted.` });
-                    }}
-                  >
-                    <Trash2 className="w-4 h-4" />
+                    View Details
                   </Button>
                 </div>
-
-                {expandedDatabaseId === db.id && (
-                  <div className="mt-4 border-t border-border/50 pt-4">
-                    <DatabaseCollections database={db} />
-                  </div>
-                )}
               </CardContent>
             </Card>
           </motion.div>
@@ -284,6 +243,16 @@ export const Database: React.FC = () => {
           </Card>
         </motion.div>
       </div>
+
+      <DatabaseDetailsDialog
+        database={selectedDatabase}
+        isOpen={isDetailsOpen}
+        onClose={() => {
+          setIsDetailsOpen(false);
+          setSelectedDatabase(null);
+        }}
+        onDelete={deleteDatabase}
+      />
     </div>
   );
 };
