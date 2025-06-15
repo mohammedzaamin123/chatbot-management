@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -32,6 +31,7 @@ export const Chatbots: React.FC = () => {
     system_prompt: '',
     greeting: '',
     database_connection: '',
+    selected_collection: '', // <-- NEW
     permissions: []
   });
 
@@ -43,12 +43,16 @@ export const Chatbots: React.FC = () => {
       conversations: 0,
       system_prompt: formData.system_prompt,
       greeting: formData.greeting,
-      database_config: formData.database_connection ? {
-        connection_id: formData.database_connection,
-        permissions: formData.permissions as any
-      } : undefined
+      // Save the selected collection and db
+      database_config: formData.database_connection
+        ? {
+            connection_id: formData.database_connection,
+            permissions: formData.permissions as any,
+            collection: formData.selected_collection || undefined
+          }
+        : undefined
     });
-    
+
     setIsCreateOpen(false);
     setFormData({
       name: '',
@@ -56,6 +60,7 @@ export const Chatbots: React.FC = () => {
       system_prompt: '',
       greeting: '',
       database_connection: '',
+      selected_collection: '',
       permissions: []
     });
   };
@@ -155,7 +160,13 @@ export const Chatbots: React.FC = () => {
                     <Label htmlFor="database">Connect Database</Label>
                     <Select
                       value={formData.database_connection}
-                      onValueChange={(value) => setFormData(prev => ({ ...prev, database_connection: value }))}
+                      onValueChange={(value) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          database_connection: value,
+                          selected_collection: ''
+                        }));
+                      }}
                     >
                       <SelectTrigger className="glass border-white/20">
                         <SelectValue placeholder="Select database" />
@@ -168,33 +179,54 @@ export const Chatbots: React.FC = () => {
                     </Select>
                   </div>
                   <div>
-                    <Label>Permissions</Label>
-                    <div className="flex gap-2 mt-2">
-                      {['READ', 'WRITE', 'UPDATE', 'DELETE'].map((perm) => (
-                        <Button
-                          key={perm}
-                          variant="outline"
-                          size="sm"
-                          className={`glass border-white/20 ${
-                            formData.permissions.includes(perm) ? 'bg-neon-purple' : ''
-                          }`}
-                          onClick={() => {
-                            setFormData(prev => ({
-                              ...prev,
-                              permissions: prev.permissions.includes(perm)
-                                ? prev.permissions.filter(p => p !== perm)
-                                : [...prev.permissions, perm]
-                            }));
-                          }}
-                        >
-                          {perm}
-                        </Button>
-                      ))}
-                    </div>
+                    <Label>Collection</Label>
+                    <Select
+                      value={formData.selected_collection}
+                      onValueChange={(collection) => setFormData(prev => ({
+                        ...prev,
+                        selected_collection: collection
+                      }))}
+                      disabled={
+                        !formData.database_connection ||
+                        !databases.find(db => db.id === formData.database_connection)
+                      }
+                    >
+                      <SelectTrigger className="glass border-white/20">
+                        <SelectValue placeholder="Choose collection" />
+                      </SelectTrigger>
+                      <SelectContent className="glass border-white/20">
+                        {(databases.find(db => db.id === formData.database_connection)?.collections || []).map((coll) => (
+                          <SelectItem key={coll} value={coll}>{coll}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
+                {/* ... keep Permissions buttons ... */}
+                <div className="flex gap-2 mt-2">
+                  {['READ', 'WRITE', 'UPDATE', 'DELETE'].map((perm) => (
+                    <Button
+                      key={perm}
+                      variant="outline"
+                      size="sm"
+                      className={`glass border-white/20 ${
+                        formData.permissions.includes(perm) ? 'bg-neon-purple' : ''
+                      }`}
+                      onClick={() => {
+                        setFormData(prev => ({
+                          ...prev,
+                          permissions: prev.permissions.includes(perm)
+                            ? prev.permissions.filter(p => p !== perm)
+                            : [...prev.permissions, perm]
+                        }));
+                      }}
+                    >
+                      {perm}
+                    </Button>
+                  ))}
+                </div>
               </div>
-              
+              {/* ... keep existing code for actions ...*/}
               <div className="flex justify-end gap-4">
                 <Button variant="outline" onClick={() => setIsCreateOpen(false)}>
                   Cancel

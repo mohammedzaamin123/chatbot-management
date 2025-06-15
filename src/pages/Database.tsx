@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Database as DatabaseIcon, Plus, Settings, Trash2, RefreshCw, Eye, Edit } from 'lucide-react';
@@ -10,6 +9,8 @@ import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
 import { useStore } from '../store/useStore';
+import { toast } from '@/hooks/use-toast';
+import { DatabaseCollections } from '../components/DatabaseCollections';
 
 export const Database: React.FC = () => {
   const { databases, addDatabase, updateDatabase, deleteDatabase } = useStore();
@@ -43,6 +44,9 @@ export const Database: React.FC = () => {
     { id: 2, name: 'Jane Smith', email: 'jane@example.com', status: 'active', created: '2024-01-14' },
     { id: 3, name: 'Bob Johnson', email: 'bob@example.com', status: 'inactive', created: '2024-01-13' }
   ];
+
+  // expandedDatabaseId keeps track of which db is "opened"
+  const [expandedDatabaseId, setExpandedDatabaseId] = useState<string | null>(null);
 
   return (
     <div className="space-y-8">
@@ -133,7 +137,14 @@ export const Database: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
           >
-            <Card className="metric-card">
+            <Card
+              className={`metric-card ${expandedDatabaseId === db.id ? 'ring-2 ring-apple-blue/60' : ''}`}
+              onClick={(e) => {
+                // Only expand/collapse if main part of card is clicked (not buttons)
+                if ((e.target as HTMLElement).tagName === 'BUTTON') return;
+                setExpandedDatabaseId(expandedDatabaseId === db.id ? null : db.id);
+              }}
+            >
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
@@ -178,26 +189,47 @@ export const Database: React.FC = () => {
                     size="sm" 
                     variant="outline" 
                     className="flex-1 glass border-white/20"
-                    onClick={() => setSelectedDatabase(db)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setExpandedDatabaseId(db.id);
+                    }}
                   >
                     <Eye className="w-4 h-4 mr-1" />
                     View
                   </Button>
-                  <Button size="sm" variant="outline" className="glass border-white/20">
+                  <Button size="sm" variant="outline" className="glass border-white/20"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toast({ title: 'Synced!', description: `Database "${db.name}" refreshed.` });
+                    }}
+                  >
                     <RefreshCw className="w-4 h-4" />
                   </Button>
-                  <Button size="sm" variant="outline" className="glass border-white/20">
+                  <Button size="sm" variant="outline" className="glass border-white/20"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toast({ title: 'Info', description: 'Settings page coming soon.' });
+                    }}
+                  >
                     <Settings className="w-4 h-4" />
                   </Button>
                   <Button 
                     size="sm" 
                     variant="outline" 
                     className="glass border-white/20 hover:border-red-500"
-                    onClick={() => deleteDatabase(db.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteDatabase(db.id);
+                      toast({ title: 'Deleted', description: `Database "${db.name}" deleted.` });
+                    }}
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>
                 </div>
+
+                {expandedDatabaseId === db.id && (
+                  <DatabaseCollections database={db} />
+                )}
               </CardContent>
             </Card>
           </motion.div>
@@ -226,67 +258,8 @@ export const Database: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Database Viewer */}
-      {selectedDatabase && (
-        <Card className="glass-strong border-white/10">
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span>Database: {selectedDatabase.name}</span>
-              <div className="flex gap-2">
-                <Button size="sm" variant="outline" className="glass border-white/20">
-                  <Edit className="w-4 h-4 mr-2" />
-                  Edit Data
-                </Button>
-                <Button size="sm" variant="outline" className="glass border-white/20">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Record
-                </Button>
-              </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>ID</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Created</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {sampleData.map((row) => (
-                  <TableRow key={row.id}>
-                    <TableCell>{row.id}</TableCell>
-                    <TableCell>{row.name}</TableCell>
-                    <TableCell>{row.email}</TableCell>
-                    <TableCell>
-                      <span className={`px-2 py-1 rounded-full text-xs ${
-                        row.status === 'active' ? 'status-active' : 'status-inactive'
-                      }`}>
-                        {row.status}
-                      </span>
-                    </TableCell>
-                    <TableCell>{row.created}</TableCell>
-                    <TableCell>
-                      <div className="flex gap-1">
-                        <Button size="sm" variant="outline" className="glass border-white/20">
-                          <Edit className="w-3 h-3" />
-                        </Button>
-                        <Button size="sm" variant="outline" className="glass border-white/20 hover:border-red-500">
-                          <Trash2 className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      )}
+      {/* Remove old "Database Viewer" block as this is now handled inline in the cards */}
+
     </div>
   );
 };
