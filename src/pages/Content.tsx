@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -12,7 +11,9 @@ import {
   Sparkles,
   TrendingUp,
   Settings,
-  Plus
+  Plus,
+  HelpCircle,
+  ArrowRight
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -27,6 +28,9 @@ export const Content: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [businessInfo, setBusinessInfo] = useState('');
   const [customPrompt, setCustomPrompt] = useState('');
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [businessAnswers, setBusinessAnswers] = useState<Record<number, string>>({});
+  const [showQuestionnaire, setShowQuestionnaire] = useState(false);
   const [pendingPosts, setPendingPosts] = useState([
     {
       id: 1,
@@ -47,6 +51,79 @@ export const Content: React.FC = () => {
       status: 'pending'
     }
   ]);
+
+  const businessQuestions = [
+    {
+      question: "What industry is your business in?",
+      placeholder: "e.g., Technology, Healthcare, Finance, E-commerce, etc.",
+      type: "text"
+    },
+    {
+      question: "What products or services do you offer?",
+      placeholder: "Describe your main offerings and what makes them unique",
+      type: "textarea"
+    },
+    {
+      question: "Who is your target audience?",
+      placeholder: "e.g., Small business owners, Tech professionals, Young families, etc.",
+      type: "text"
+    },
+    {
+      question: "What is your brand voice and tone?",
+      placeholder: "e.g., Professional, Friendly, Casual, Authoritative, Innovative, etc.",
+      type: "text"
+    },
+    {
+      question: "What are your main business goals?",
+      placeholder: "e.g., Increase brand awareness, Generate leads, Drive sales, etc.",
+      type: "textarea"
+    },
+    {
+      question: "What topics should your content focus on?",
+      placeholder: "e.g., Industry trends, Product features, Customer success stories, etc.",
+      type: "textarea"
+    },
+    {
+      question: "Who are your main competitors?",
+      placeholder: "List companies you compete with and what differentiates you",
+      type: "text"
+    },
+    {
+      question: "What is your company's mission or vision?",
+      placeholder: "What drives your business and what impact do you want to make?",
+      type: "textarea"
+    }
+  ];
+
+  const handleStartQuestionnaire = () => {
+    setShowQuestionnaire(true);
+    setCurrentQuestionIndex(0);
+    setBusinessAnswers({});
+  };
+
+  const handleAnswerChange = (answer: string) => {
+    setBusinessAnswers(prev => ({
+      ...prev,
+      [currentQuestionIndex]: answer
+    }));
+  };
+
+  const handleNextQuestion = () => {
+    if (currentQuestionIndex < businessQuestions.length - 1) {
+      setCurrentQuestionIndex(prev => prev + 1);
+    } else {
+      // Questionnaire completed
+      const allAnswers = Object.values(businessAnswers).join('\n\n');
+      setBusinessInfo(allAnswers);
+      setShowQuestionnaire(false);
+    }
+  };
+
+  const handlePreviousQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(prev => prev - 1);
+    }
+  };
 
   const handleBusinessAIGenerate = async () => {
     if (!businessInfo.trim()) return;
@@ -95,6 +172,9 @@ export const Content: React.FC = () => {
   const handleRejectPost = (postId: number) => {
     setPendingPosts(prev => prev.filter(post => post.id !== postId));
   };
+
+  const currentQuestion = businessQuestions[currentQuestionIndex];
+  const currentAnswer = businessAnswers[currentQuestionIndex] || '';
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto p-6">
@@ -151,8 +231,7 @@ export const Content: React.FC = () => {
                           Step 1: Teach AI About Your Business
                         </h3>
                         <p className="text-sm text-muted-foreground mb-4">
-                          Share details about your business, industry, target audience, and brand voice. 
-                          AI will learn and create content that matches your brand perfectly.
+                          Answer AI's questions about your business so it can learn your industry, audience, and brand voice to create perfect content.
                         </p>
                         <div className="flex flex-wrap gap-2 text-xs">
                           <span className="bg-purple-500/20 text-purple-300 px-2 py-1 rounded">Industry</span>
@@ -164,65 +243,157 @@ export const Content: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <div>
-                      <Label className="text-base font-medium">Business Information</Label>
-                      <Textarea
-                        placeholder="Tell AI about your business: What industry are you in? Who is your target audience? What's your brand voice? What products/services do you offer? What topics should we focus on?"
-                        className="mt-2 h-32 bg-black/20 border-white/20"
-                        value={businessInfo}
-                        onChange={(e) => setBusinessInfo(e.target.value)}
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label>Content Frequency</Label>
-                        <Select defaultValue="daily">
-                          <SelectTrigger className="bg-black/20 border-white/20">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="bg-gray-900 border-white/20">
-                            <SelectItem value="daily">Daily</SelectItem>
-                            <SelectItem value="weekly">Weekly</SelectItem>
-                            <SelectItem value="bi-weekly">Bi-weekly</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label>Primary Platform</Label>
-                        <Select defaultValue="linkedin">
-                          <SelectTrigger className="bg-black/20 border-white/20">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="bg-gray-900 border-white/20">
-                            <SelectItem value="linkedin">LinkedIn</SelectItem>
-                            <SelectItem value="twitter">Twitter</SelectItem>
-                            <SelectItem value="facebook">Facebook</SelectItem>
-                            <SelectItem value="instagram">Instagram</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
-                    <Button 
-                      onClick={handleBusinessAIGenerate}
-                      disabled={isGenerating || !businessInfo.trim()}
-                      className="w-full bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600"
-                    >
-                      {isGenerating ? (
-                        <>
-                          <div className="animate-spin w-4 h-4 border-2 border-white/30 border-t-white rounded-full mr-2"></div>
-                          AI is Learning Your Business...
-                        </>
-                      ) : (
-                        <>
+                  {!showQuestionnaire && !businessInfo ? (
+                    <div className="text-center space-y-4">
+                      <div className="bg-black/20 border border-white/10 rounded-lg p-8">
+                        <HelpCircle className="w-16 h-16 text-purple-400 mx-auto mb-4" />
+                        <h3 className="text-xl font-semibold mb-2">Let AI Learn Your Business</h3>
+                        <p className="text-muted-foreground mb-6">
+                          AI will ask you {businessQuestions.length} targeted questions to understand your business completely.
+                        </p>
+                        <Button 
+                          onClick={handleStartQuestionnaire}
+                          className="bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600"
+                        >
                           <Brain className="w-4 h-4 mr-2" />
-                          Start AI Business Learning
-                        </>
-                      )}
-                    </Button>
-                  </div>
+                          Start Business Interview
+                        </Button>
+                      </div>
+                    </div>
+                  ) : showQuestionnaire ? (
+                    <div className="space-y-6">
+                      <div className="bg-black/20 border border-white/10 rounded-lg p-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-2">
+                            <Bot className="w-5 h-5 text-purple-400" />
+                            <span className="text-sm text-purple-400 font-medium">
+                              AI Question {currentQuestionIndex + 1} of {businessQuestions.length}
+                            </span>
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {Math.round(((currentQuestionIndex + 1) / businessQuestions.length) * 100)}% Complete
+                          </div>
+                        </div>
+                        
+                        <div className="w-full bg-gray-700 rounded-full h-2 mb-6">
+                          <div 
+                            className="bg-gradient-to-r from-purple-500 to-indigo-500 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${((currentQuestionIndex + 1) / businessQuestions.length) * 100}%` }}
+                          ></div>
+                        </div>
+
+                        <h3 className="text-lg font-semibold mb-4">{currentQuestion.question}</h3>
+                        
+                        {currentQuestion.type === 'textarea' ? (
+                          <Textarea
+                            placeholder={currentQuestion.placeholder}
+                            className="bg-black/20 border-white/20 h-24"
+                            value={currentAnswer}
+                            onChange={(e) => handleAnswerChange(e.target.value)}
+                          />
+                        ) : (
+                          <Input
+                            placeholder={currentQuestion.placeholder}
+                            className="bg-black/20 border-white/20"
+                            value={currentAnswer}
+                            onChange={(e) => handleAnswerChange(e.target.value)}
+                          />
+                        )}
+
+                        <div className="flex justify-between items-center mt-6">
+                          <Button
+                            variant="outline"
+                            onClick={handlePreviousQuestion}
+                            disabled={currentQuestionIndex === 0}
+                            className="border-white/20"
+                          >
+                            Previous
+                          </Button>
+                          
+                          <Button
+                            onClick={handleNextQuestion}
+                            disabled={!currentAnswer.trim()}
+                            className="bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600"
+                          >
+                            {currentQuestionIndex === businessQuestions.length - 1 ? 'Complete Interview' : 'Next Question'}
+                            <ArrowRight className="w-4 h-4 ml-2" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <CheckCircle className="w-5 h-5 text-green-400" />
+                          <span className="text-green-400 font-medium">Business Profile Complete!</span>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          AI has learned about your business and is ready to generate personalized content.
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label>Content Frequency</Label>
+                          <Select defaultValue="daily">
+                            <SelectTrigger className="bg-black/20 border-white/20">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="bg-gray-900 border-white/20">
+                              <SelectItem value="daily">Daily</SelectItem>
+                              <SelectItem value="weekly">Weekly</SelectItem>
+                              <SelectItem value="bi-weekly">Bi-weekly</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label>Primary Platform</Label>
+                          <Select defaultValue="linkedin">
+                            <SelectTrigger className="bg-black/20 border-white/20">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="bg-gray-900 border-white/20">
+                              <SelectItem value="linkedin">LinkedIn</SelectItem>
+                              <SelectItem value="twitter">Twitter</SelectItem>
+                              <SelectItem value="facebook">Facebook</SelectItem>
+                              <SelectItem value="instagram">Instagram</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+
+                      <Button 
+                        onClick={handleBusinessAIGenerate}
+                        disabled={isGenerating}
+                        className="w-full bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600"
+                      >
+                        {isGenerating ? (
+                          <>
+                            <div className="animate-spin w-4 h-4 border-2 border-white/30 border-t-white rounded-full mr-2"></div>
+                            AI is Creating Content...
+                          </>
+                        ) : (
+                          <>
+                            <Brain className="w-4 h-4 mr-2" />
+                            Generate Business Content
+                          </>
+                        )}
+                      </Button>
+                      
+                      <Button 
+                        variant="outline"
+                        onClick={() => {
+                          setBusinessInfo('');
+                          setBusinessAnswers({});
+                          setCurrentQuestionIndex(0);
+                        }}
+                        className="w-full border-white/20"
+                      >
+                        Retake Business Interview
+                      </Button>
+                    </div>
+                  )}
                 </TabsContent>
 
                 {/* Custom Prompt Tab */}
@@ -328,7 +499,6 @@ export const Content: React.FC = () => {
 
         {/* Sidebar - Approval Queue */}
         <div className="space-y-6">
-          {/* Pending Approval Section */}
           <Card className="glass border-white/10">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
@@ -397,7 +567,6 @@ export const Content: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* Quick Stats */}
           <Card className="glass border-white/10">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -425,7 +594,6 @@ export const Content: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* Settings Card */}
           <Card className="glass border-white/10">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
