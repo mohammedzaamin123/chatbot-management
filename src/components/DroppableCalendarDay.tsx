@@ -16,6 +16,7 @@ interface DroppableCalendarDayProps {
   date: Date;
   posts: Post[];
   onDropPost: (postId: string, newDate: Date) => void;
+  onDropDraftPost?: (draftId: string, newDate: Date, time?: string) => void;
   isToday?: boolean;
 }
 
@@ -23,12 +24,17 @@ export const DroppableCalendarDay: React.FC<DroppableCalendarDayProps> = ({
   date,
   posts,
   onDropPost,
+  onDropDraftPost,
   isToday = false
 }) => {
   const [{ isOver }, drop] = useDrop(() => ({
-    accept: 'post',
-    drop: (item: { id: string; post: Post }) => {
-      onDropPost(item.id, date);
+    accept: ['post', 'draft'],
+    drop: (item: { id: string; post?: Post; draft?: any; type?: string }) => {
+      if (item.post) {
+        onDropPost(item.id, date);
+      } else if (item.draft && onDropDraftPost) {
+        onDropDraftPost(item.id, date, '12:00');
+      }
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
