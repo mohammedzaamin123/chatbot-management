@@ -31,15 +31,23 @@ export const Scheduler: React.FC = () => {
   const [viewMode, setViewMode] = useState<'week' | 'month'>('month');
   const [formData, setFormData] = useState({
     content: '',
-    platforms: [],
+    platforms: [] as string[],
     scheduled_at: '',
-    media: []
+    media: [] as string[]
   });
 
   const handleCreatePost = () => {
+    if (!formData.content || !formData.scheduled_at || formData.platforms.length === 0) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields."
+      });
+      return;
+    }
+
     addScheduledPost({
       content: formData.content,
-      platforms: formData.platforms as any,
+      platforms: formData.platforms as ('instagram' | 'facebook' | 'twitter' | 'linkedin')[],
       scheduled_at: formData.scheduled_at,
       status: 'scheduled',
       media: formData.media
@@ -288,7 +296,7 @@ export const Scheduler: React.FC = () => {
                       onDropPost={handleDropPost}
                       isToday={isToday(day)}
                     />
-                  </motion.div>
+                  </motion.dev>
                 );
               })}
             </div>
