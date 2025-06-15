@@ -38,16 +38,20 @@ export const DatabaseCollections: React.FC<Props> = ({ database }) => {
   const [selectedCollection, setSelectedCollection] = useState<string | null>(null);
 
   return (
-    <div className="mt-2 bg-apple-gray-50 rounded p-4">
-      <h4 className="font-semibold mb-2">Collections</h4>
-      <div className="flex flex-wrap gap-2 mb-2">
+    <div className="space-y-4">
+      <h4 className="font-semibold text-foreground">Collections</h4>
+      <div className="flex flex-wrap gap-2">
         {database.collections.map((collection) => (
           <Button
             variant={selectedCollection === collection ? 'default' : 'outline'}
             size="sm"
             key={collection}
-            className=""
-            onClick={() => setSelectedCollection(collection)}
+            className={`rounded-lg ${
+              selectedCollection === collection 
+                ? 'bg-primary text-primary-foreground' 
+                : 'bg-card/50 border-border/50 hover:bg-accent'
+            }`}
+            onClick={() => setSelectedCollection(selectedCollection === collection ? null : collection)}
           >
             {collection}
           </Button>
@@ -55,10 +59,12 @@ export const DatabaseCollections: React.FC<Props> = ({ database }) => {
       </div>
 
       {selectedCollection && (
-        <CollectionRecords
-          collectionName={selectedCollection}
-          records={SAMPLE_COLLECTION_DATA[selectedCollection] || []}
-        />
+        <div className="bg-card/30 rounded-xl p-4 border border-border/50">
+          <CollectionRecords
+            collectionName={selectedCollection}
+            records={SAMPLE_COLLECTION_DATA[selectedCollection] || []}
+          />
+        </div>
       )}
     </div>
   );
