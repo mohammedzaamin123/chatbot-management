@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -296,7 +295,7 @@ export const Scheduler: React.FC = () => {
                       onDropPost={handleDropPost}
                       isToday={isToday(day)}
                     />
-                  </motion.dev>
+                  </motion.div>
                 );
               })}
             </div>
