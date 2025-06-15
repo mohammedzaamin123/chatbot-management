@@ -1,3 +1,4 @@
+
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -41,6 +42,7 @@ interface Chatbot {
   database_config?: {
     connection_id: string;
     permissions: ('READ' | 'WRITE' | 'UPDATE' | 'DELETE')[];
+    collection?: string;
   };
 }
 
@@ -76,7 +78,7 @@ interface Message {
   assigned_to?: string;
 }
 
-interface DatabaseConnection {
+export interface DatabaseConnection {
   id: string;
   name: string;
   type: 'mongodb' | 'postgresql' | 'airtable';

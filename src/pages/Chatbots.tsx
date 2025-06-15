@@ -31,7 +31,7 @@ export const Chatbots: React.FC = () => {
     system_prompt: '',
     greeting: '',
     database_connection: '',
-    selected_collection: '', // <-- NEW
+    selected_collection: '',
     permissions: []
   });
 
@@ -43,7 +43,6 @@ export const Chatbots: React.FC = () => {
       conversations: 0,
       system_prompt: formData.system_prompt,
       greeting: formData.greeting,
-      // Save the selected collection and db
       database_config: formData.database_connection
         ? {
             connection_id: formData.database_connection,
@@ -202,7 +201,6 @@ export const Chatbots: React.FC = () => {
                     </Select>
                   </div>
                 </div>
-                {/* ... keep Permissions buttons ... */}
                 <div className="flex gap-2 mt-2">
                   {['READ', 'WRITE', 'UPDATE', 'DELETE'].map((perm) => (
                     <Button
@@ -226,7 +224,6 @@ export const Chatbots: React.FC = () => {
                   ))}
                 </div>
               </div>
-              {/* ... keep existing code for actions ...*/}
               <div className="flex justify-end gap-4">
                 <Button variant="outline" onClick={() => setIsCreateOpen(false)}>
                   Cancel
