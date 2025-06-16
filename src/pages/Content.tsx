@@ -13,7 +13,10 @@ import {
   Settings,
   Plus,
   HelpCircle,
-  ArrowRight
+  ArrowRight,
+  Image,
+  Video,
+  Download
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -32,6 +35,10 @@ export const Content: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [businessInfo, setBusinessInfo] = useState('');
   const [customPrompt, setCustomPrompt] = useState('');
+  const [imagePrompt, setImagePrompt] = useState('');
+  const [videoPrompt, setVideoPrompt] = useState('');
+  const [generatedImages, setGeneratedImages] = useState<string[]>([]);
+  const [generatedVideos, setGeneratedVideos] = useState<string[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [businessAnswers, setBusinessAnswers] = useState<Record<number, string>>({});
   const [showQuestionnaire, setShowQuestionnaire] = useState(false);
@@ -96,7 +103,6 @@ export const Content: React.FC = () => {
     if (currentQuestionIndex < businessQuestions.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1);
     } else {
-      // Questionnaire completed
       const allAnswers = Object.values(businessAnswers).join('\n\n');
       setBusinessInfo(allAnswers);
       setShowQuestionnaire(false);
@@ -122,7 +128,7 @@ export const Content: React.FC = () => {
 
       toast({
         title: "Draft Created",
-        description: "AI has created a business content draft. Go to Post Scheduler to schedule it!"
+        description: "AI has created a business content draft. Check the Post Scheduler to schedule it!"
       });
 
       setIsGenerating(false);
@@ -143,7 +149,7 @@ export const Content: React.FC = () => {
 
       toast({
         title: "Draft Created", 
-        description: "Custom content draft created. Go to Post Scheduler to schedule it!"
+        description: "Custom content draft created. Check the Post Scheduler to schedule it!"
       });
 
       setIsGenerating(false);
@@ -151,10 +157,59 @@ export const Content: React.FC = () => {
     }, 2000);
   };
 
+  const handleImageGenerate = async () => {
+    if (!imagePrompt.trim()) return;
+    
+    setIsGenerating(true);
+    setTimeout(() => {
+      // Simulate image generation with placeholder
+      const newImage = `https://images.unsplash.com/photo-${Date.now()}?w=512&h=512&fit=crop`;
+      setGeneratedImages(prev => [...prev, newImage]);
+      
+      addDraftPost({
+        content: `Generated image from prompt: "${imagePrompt}" - Perfect for visual storytelling and engaging your audience.`,
+        platforms: ['instagram'],
+        media: [newImage]
+      });
+
+      toast({
+        title: "Image Generated",
+        description: "AI image has been generated and added to drafts!"
+      });
+
+      setIsGenerating(false);
+      setImagePrompt('');
+    }, 3000);
+  };
+
+  const handleVideoGenerate = async () => {
+    if (!videoPrompt.trim()) return;
+    
+    setIsGenerating(true);
+    setTimeout(() => {
+      // Simulate video generation with placeholder
+      const newVideo = `https://sample-videos.com/zip/10/mp4/SampleVideo_${Date.now()}.mp4`;
+      setGeneratedVideos(prev => [...prev, newVideo]);
+      
+      addDraftPost({
+        content: `Generated video from prompt: "${videoPrompt}" - Dynamic video content to boost engagement and reach.`,
+        platforms: ['instagram', 'facebook'],
+        media: [newVideo]
+      });
+
+      toast({
+        title: "Video Generated",
+        description: "AI video has been generated and added to drafts!"
+      });
+
+      setIsGenerating(false);
+      setVideoPrompt('');
+    }, 5000);
+  };
+
   const handleApproveDraft = (draftId: string) => {
     const draft = draftPosts.find(p => p.id === draftId);
     if (draft) {
-      // Schedule it for tomorrow at 12:00 PM
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       tomorrow.setHours(12, 0, 0, 0);
@@ -196,10 +251,10 @@ export const Content: React.FC = () => {
         className="text-center space-y-4"
       >
         <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-          AI Content Manager
+          AI Content Studio
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Let AI learn your business and create personalized content, or use custom prompts for specific needs
+          Create text, images, and videos with AI. Generate personalized content or use custom prompts for any creative need.
         </p>
       </motion.div>
 
@@ -215,20 +270,34 @@ export const Content: React.FC = () => {
             </CardHeader>
             <CardContent>
               <Tabs value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="grid w-full grid-cols-2 mb-6">
+                <TabsList className="grid w-full grid-cols-4 mb-6">
                   <TabsTrigger 
                     value="business-ai" 
                     className="flex items-center gap-2 data-[state=active]:bg-purple-500/20"
                   >
                     <Brain className="w-4 h-4" />
-                    Business AI Learning
+                    Business AI
                   </TabsTrigger>
                   <TabsTrigger 
                     value="custom-prompt"
                     className="flex items-center gap-2 data-[state=active]:bg-blue-500/20"
                   >
                     <MessageSquare className="w-4 h-4" />
-                    Custom Prompts
+                    Custom Text
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="image-gen"
+                    className="flex items-center gap-2 data-[state=active]:bg-green-500/20"
+                  >
+                    <Image className="w-4 h-4" />
+                    AI Images
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="video-gen"
+                    className="flex items-center gap-2 data-[state=active]:bg-red-500/20"
+                  >
+                    <Video className="w-4 h-4" />
+                    AI Videos
                   </TabsTrigger>
                 </TabsList>
 
@@ -414,17 +483,12 @@ export const Content: React.FC = () => {
                       <MessageSquare className="w-8 h-8 text-blue-400 mt-1" />
                       <div>
                         <h3 className="text-lg font-semibold text-blue-400 mb-2">
-                          Step 1: Create Custom Content
+                          Create Custom Text Content
                         </h3>
                         <p className="text-sm text-muted-foreground mb-4">
                           Write specific prompts to generate exactly the content you need. 
                           Perfect for one-off posts, campaigns, or unique content requirements.
                         </p>
-                        <div className="flex flex-wrap gap-2 text-xs">
-                          <span className="bg-blue-500/20 text-blue-300 px-2 py-1 rounded">Specific Topics</span>
-                          <span className="bg-blue-500/20 text-blue-300 px-2 py-1 rounded">Custom Tone</span>
-                          <span className="bg-blue-500/20 text-blue-300 px-2 py-1 rounded">Targeted Content</span>
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -438,50 +502,6 @@ export const Content: React.FC = () => {
                         value={customPrompt}
                         onChange={(e) => setCustomPrompt(e.target.value)}
                       />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <Label>Content Type</Label>
-                        <Select defaultValue="social">
-                          <SelectTrigger className="bg-black/20 border-white/20">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="bg-gray-900 border-white/20">
-                            <SelectItem value="social">Social Post</SelectItem>
-                            <SelectItem value="blog">Blog Article</SelectItem>
-                            <SelectItem value="email">Email Content</SelectItem>
-                            <SelectItem value="ad">Advertisement</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label>Tone</Label>
-                        <Select defaultValue="professional">
-                          <SelectTrigger className="bg-black/20 border-white/20">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="bg-gray-900 border-white/20">
-                            <SelectItem value="professional">Professional</SelectItem>
-                            <SelectItem value="casual">Casual</SelectItem>
-                            <SelectItem value="friendly">Friendly</SelectItem>
-                            <SelectItem value="authoritative">Authoritative</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label>Length</Label>
-                        <Select defaultValue="medium">
-                          <SelectTrigger className="bg-black/20 border-white/20">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="bg-gray-900 border-white/20">
-                            <SelectItem value="short">Short</SelectItem>
-                            <SelectItem value="medium">Medium</SelectItem>
-                            <SelectItem value="long">Long</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
                     </div>
 
                     <Button 
@@ -503,6 +523,247 @@ export const Content: React.FC = () => {
                     </Button>
                   </div>
                 </TabsContent>
+
+                {/* Image Generation Tab */}
+                <TabsContent value="image-gen" className="space-y-6">
+                  <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 p-6 rounded-lg border border-green-500/20">
+                    <div className="flex items-start gap-4">
+                      <Image className="w-8 h-8 text-green-400 mt-1" />
+                      <div>
+                        <h3 className="text-lg font-semibold text-green-400 mb-2">
+                          AI Image Generation
+                        </h3>
+                        <p className="text-sm text-muted-foreground mb-4">
+                          Create stunning visuals with AI. Perfect for social media posts, marketing materials, and creative content.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <Label className="text-base font-medium">Image Description</Label>
+                      <Textarea
+                        placeholder="Describe the image you want: style, colors, objects, mood, lighting, etc. Be as detailed as possible for better results."
+                        className="mt-2 h-24 bg-black/20 border-white/20"
+                        value={imagePrompt}
+                        onChange={(e) => setImagePrompt(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <Label>Style</Label>
+                        <Select defaultValue="realistic">
+                          <SelectTrigger className="bg-black/20 border-white/20">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-gray-900 border-white/20">
+                            <SelectItem value="realistic">Realistic</SelectItem>
+                            <SelectItem value="artistic">Artistic</SelectItem>
+                            <SelectItem value="cartoon">Cartoon</SelectItem>
+                            <SelectItem value="abstract">Abstract</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Resolution</Label>
+                        <Select defaultValue="1024x1024">
+                          <SelectTrigger className="bg-black/20 border-white/20">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-gray-900 border-white/20">
+                            <SelectItem value="512x512">512×512</SelectItem>
+                            <SelectItem value="1024x1024">1024×1024</SelectItem>
+                            <SelectItem value="1024x768">1024×768</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Quality</Label>
+                        <Select defaultValue="high">
+                          <SelectTrigger className="bg-black/20 border-white/20">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-gray-900 border-white/20">
+                            <SelectItem value="standard">Standard</SelectItem>
+                            <SelectItem value="high">High</SelectItem>
+                            <SelectItem value="ultra">Ultra</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <Button 
+                      onClick={handleImageGenerate}
+                      disabled={isGenerating || !imagePrompt.trim()}
+                      className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+                    >
+                      {isGenerating ? (
+                        <>
+                          <div className="animate-spin w-4 h-4 border-2 border-white/30 border-t-white rounded-full mr-2"></div>
+                          Generating Image...
+                        </>
+                      ) : (
+                        <>
+                          <Image className="w-4 h-4 mr-2" />
+                          Generate Image
+                        </>
+                      )}
+                    </Button>
+
+                    {generatedImages.length > 0 && (
+                      <div className="space-y-4">
+                        <h4 className="text-lg font-semibold">Generated Images</h4>
+                        <div className="grid grid-cols-2 gap-4">
+                          {generatedImages.map((image, index) => (
+                            <div key={index} className="relative group">
+                              <img 
+                                src={image} 
+                                alt={`Generated ${index + 1}`}
+                                className="w-full h-32 object-cover rounded-lg border border-white/10"
+                              />
+                              <Button
+                                size="sm"
+                                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={() => {
+                                  // Download functionality would go here
+                                  toast({
+                                    title: "Download Started",
+                                    description: "Image download has started"
+                                  });
+                                }}
+                              >
+                                <Download className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </TabsContent>
+
+                {/* Video Generation Tab */}
+                <TabsContent value="video-gen" className="space-y-6">
+                  <div className="bg-gradient-to-r from-red-500/10 to-pink-500/10 p-6 rounded-lg border border-red-500/20">
+                    <div className="flex items-start gap-4">
+                      <Video className="w-8 h-8 text-red-400 mt-1" />
+                      <div>
+                        <h3 className="text-lg font-semibold text-red-400 mb-2">
+                          AI Video Generation
+                        </h3>
+                        <p className="text-sm text-muted-foreground mb-4">
+                          Create engaging video content with AI. Perfect for social media, presentations, and marketing campaigns.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <Label className="text-base font-medium">Video Description</Label>
+                      <Textarea
+                        placeholder="Describe the video you want: scene, actions, style, duration, etc. Include details about movement, camera angles, and visual effects."
+                        className="mt-2 h-24 bg-black/20 border-white/20"
+                        value={videoPrompt}
+                        onChange={(e) => setVideoPrompt(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <Label>Duration</Label>
+                        <Select defaultValue="5s">
+                          <SelectTrigger className="bg-black/20 border-white/20">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-gray-900 border-white/20">
+                            <SelectItem value="5s">5 seconds</SelectItem>
+                            <SelectItem value="10s">10 seconds</SelectItem>
+                            <SelectItem value="15s">15 seconds</SelectItem>
+                            <SelectItem value="30s">30 seconds</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Resolution</Label>
+                        <Select defaultValue="1080p">
+                          <SelectTrigger className="bg-black/20 border-white/20">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-gray-900 border-white/20">
+                            <SelectItem value="720p">720p HD</SelectItem>
+                            <SelectItem value="1080p">1080p Full HD</SelectItem>
+                            <SelectItem value="4k">4K Ultra HD</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Style</Label>
+                        <Select defaultValue="cinematic">
+                          <SelectTrigger className="bg-black/20 border-white/20">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-gray-900 border-white/20">
+                            <SelectItem value="cinematic">Cinematic</SelectItem>
+                            <SelectItem value="animation">Animation</SelectItem>
+                            <SelectItem value="realistic">Realistic</SelectItem>
+                            <SelectItem value="artistic">Artistic</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <Button 
+                      onClick={handleVideoGenerate}
+                      disabled={isGenerating || !videoPrompt.trim()}
+                      className="w-full bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600"
+                    >
+                      {isGenerating ? (
+                        <>
+                          <div className="animate-spin w-4 h-4 border-2 border-white/30 border-t-white rounded-full mr-2"></div>
+                          Generating Video...
+                        </>
+                      ) : (
+                        <>
+                          <Video className="w-4 h-4 mr-2" />
+                          Generate Video
+                        </>
+                      )}
+                    </Button>
+
+                    {generatedVideos.length > 0 && (
+                      <div className="space-y-4">
+                        <h4 className="text-lg font-semibold">Generated Videos</h4>
+                        <div className="grid grid-cols-1 gap-4">
+                          {generatedVideos.map((video, index) => (
+                            <div key={index} className="relative group">
+                              <video 
+                                src={video}
+                                className="w-full h-48 object-cover rounded-lg border border-white/10"
+                                controls
+                                poster="https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=200&fit=crop"
+                              />
+                              <Button
+                                size="sm"
+                                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={() => {
+                                  toast({
+                                    title: "Download Started",
+                                    description: "Video download has started"
+                                  });
+                                }}
+                              >
+                                <Download className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </TabsContent>
               </Tabs>
             </CardContent>
           </Card>
@@ -515,7 +776,7 @@ export const Content: React.FC = () => {
               <CardTitle className="flex items-center justify-between">
                 <span className="flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-yellow-400" />
-                  Step 2: Review Draft Posts
+                  Review Draft Posts
                 </span>
                 <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full text-xs font-medium">
                   {draftPosts.length} drafts
@@ -550,6 +811,12 @@ export const Content: React.FC = () => {
                       <p className="text-xs text-muted-foreground mb-2">
                         {draft.content.substring(0, 100)}...
                       </p>
+                      {draft.media && draft.media.length > 0 && (
+                        <div className="flex items-center gap-1 text-xs text-blue-400">
+                          {draft.media[0].includes('mp4') ? <Video className="w-3 h-3" /> : <Image className="w-3 h-3" />}
+                          Media attached
+                        </div>
+                      )}
                     </div>
                     
                     <div className="flex gap-2">
