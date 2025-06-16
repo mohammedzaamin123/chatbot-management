@@ -22,8 +22,12 @@ import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { useStore } from '../store/useStore';
+import { useToast } from '../hooks/use-toast';
 
 export const Content: React.FC = () => {
+  const { draftPosts, addDraftPost, deleteDraftPost, addScheduledPost } = useStore();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('business-ai');
   const [isGenerating, setIsGenerating] = useState(false);
   const [businessInfo, setBusinessInfo] = useState('');
@@ -31,26 +35,6 @@ export const Content: React.FC = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [businessAnswers, setBusinessAnswers] = useState<Record<number, string>>({});
   const [showQuestionnaire, setShowQuestionnaire] = useState(false);
-  const [pendingPosts, setPendingPosts] = useState([
-    {
-      id: 1,
-      type: 'business-ai',
-      title: 'AI-Generated: Tech Industry Insights',
-      content: 'Based on your business profile, here\'s what\'s trending in tech...',
-      platform: 'LinkedIn',
-      scheduledFor: '2024-01-15 10:00 AM',
-      status: 'pending'
-    },
-    {
-      id: 2,
-      type: 'custom-prompt',
-      title: 'Custom: Product Launch Announcement',
-      content: 'Exciting news! We\'re launching our new AI-powered solution...',
-      platform: 'Twitter',
-      scheduledFor: '2024-01-15 2:00 PM',
-      status: 'pending'
-    }
-  ]);
 
   const businessQuestions = [
     {
@@ -130,16 +114,17 @@ export const Content: React.FC = () => {
     
     setIsGenerating(true);
     setTimeout(() => {
-      const newPost = {
-        id: Date.now(),
-        type: 'business-ai',
-        title: 'AI-Generated Business Content',
-        content: `AI learned from: "${businessInfo.substring(0, 50)}..." and created relevant content.`,
-        platform: 'LinkedIn',
-        scheduledFor: new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleString(),
-        status: 'pending'
-      };
-      setPendingPosts(prev => [newPost, ...prev]);
+      addDraftPost({
+        content: `AI learned from your business profile and created: "${businessInfo.substring(0, 50)}..." - This is AI-generated business content based on your industry insights and target audience preferences.`,
+        platforms: ['linkedin'],
+        media: []
+      });
+
+      toast({
+        title: "Draft Created",
+        description: "AI has created a business content draft. Go to Post Scheduler to schedule it!"
+      });
+
       setIsGenerating(false);
       setBusinessInfo('');
     }, 3000);
@@ -150,27 +135,53 @@ export const Content: React.FC = () => {
     
     setIsGenerating(true);
     setTimeout(() => {
-      const newPost = {
-        id: Date.now(),
-        type: 'custom-prompt',
-        title: 'Custom Prompt Generated Content',
-        content: `Generated from: "${customPrompt.substring(0, 50)}..."`,
-        platform: 'Twitter',
-        scheduledFor: new Date(Date.now() + 12 * 60 * 60 * 1000).toLocaleString(),
-        status: 'pending'
-      };
-      setPendingPosts(prev => [newPost, ...prev]);
+      addDraftPost({
+        content: `Custom content generated from prompt: "${customPrompt.substring(0, 50)}..." - This content was specifically created based on your custom requirements and messaging needs.`,
+        platforms: ['twitter'],
+        media: []
+      });
+
+      toast({
+        title: "Draft Created", 
+        description: "Custom content draft created. Go to Post Scheduler to schedule it!"
+      });
+
       setIsGenerating(false);
       setCustomPrompt('');
     }, 2000);
   };
 
-  const handleApprovePost = (postId: number) => {
-    setPendingPosts(prev => prev.filter(post => post.id !== postId));
+  const handleApproveDraft = (draftId: string) => {
+    const draft = draftPosts.find(p => p.id === draftId);
+    if (draft) {
+      // Schedule it for tomorrow at 12:00 PM
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(12, 0, 0, 0);
+
+      addScheduledPost({
+        content: draft.content,
+        platforms: draft.platforms,
+        scheduled_at: tomorrow.toISOString(),
+        status: 'scheduled',
+        media: draft.media
+      });
+
+      deleteDraftPost(draftId);
+
+      toast({
+        title: "Post Scheduled",
+        description: "Draft has been approved and scheduled for tomorrow at 12:00 PM"
+      });
+    }
   };
 
-  const handleRejectPost = (postId: number) => {
-    setPendingPosts(prev => prev.filter(post => post.id !== postId));
+  const handleDeleteDraft = (draftId: string) => {
+    deleteDraftPost(draftId);
+    toast({
+      title: "Draft Deleted",
+      description: "Draft post has been removed"
+    });
   };
 
   const currentQuestion = businessQuestions[currentQuestionIndex];
@@ -497,65 +508,63 @@ export const Content: React.FC = () => {
           </Card>
         </div>
 
-        {/* Sidebar - Approval Queue */}
+        {/* Sidebar - Draft Posts Review */}
         <div className="space-y-6">
           <Card className="glass border-white/10">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <span className="flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-yellow-400" />
-                  Step 2: Review & Approve
+                  Step 2: Review Draft Posts
                 </span>
                 <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full text-xs font-medium">
-                  {pendingPosts.length} pending
+                  {draftPosts.length} drafts
                 </span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {pendingPosts.length === 0 ? (
+              {draftPosts.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   <MessageSquare className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                  <p>No posts waiting for approval</p>
-                  <p className="text-sm">Generate content to see it here</p>
+                  <p>No draft posts yet</p>
+                  <p className="text-sm">Generate content to see drafts here</p>
                 </div>
               ) : (
-                pendingPosts.map((post) => (
+                draftPosts.map((draft) => (
                   <motion.div
-                    key={post.id}
+                    key={draft.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="p-4 bg-black/20 rounded-lg border border-white/10 space-y-3"
                   >
                     <div className="flex items-center gap-2">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        post.type === 'business-ai' 
-                          ? 'bg-purple-500/20 text-purple-400' 
-                          : 'bg-blue-500/20 text-blue-400'
-                      }`}>
-                        {post.type === 'business-ai' ? 'AI Generated' : 'Custom Prompt'}
+                      <span className="bg-purple-500/20 text-purple-400 px-2 py-1 rounded-full text-xs font-medium">
+                        Draft Post
                       </span>
-                      <span className="text-xs text-muted-foreground">{post.platform}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {draft.platforms.join(', ')}
+                      </span>
                     </div>
                     
                     <div>
-                      <h4 className="font-medium text-sm mb-1">{post.title}</h4>
-                      <p className="text-xs text-muted-foreground mb-2">{post.content}</p>
-                      <p className="text-xs text-muted-foreground">📅 {post.scheduledFor}</p>
+                      <p className="text-xs text-muted-foreground mb-2">
+                        {draft.content.substring(0, 100)}...
+                      </p>
                     </div>
                     
                     <div className="flex gap-2">
                       <Button
                         size="sm"
-                        onClick={() => handleApprovePost(post.id)}
+                        onClick={() => handleApproveDraft(draft.id)}
                         className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                       >
                         <CheckCircle className="w-4 h-4 mr-1" />
-                        Approve & Post
+                        Schedule
                       </Button>
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => handleRejectPost(post.id)}
+                        onClick={() => handleDeleteDraft(draft.id)}
                         className="border-red-500/20 text-red-400 hover:bg-red-500/10"
                       >
                         <XCircle className="w-4 h-4" />
@@ -580,8 +589,8 @@ export const Content: React.FC = () => {
                 <span className="font-bold">47 posts</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm">Pending Review</span>
-                <span className="font-bold text-yellow-400">{pendingPosts.length}</span>
+                <span className="text-sm">Draft Posts</span>
+                <span className="font-bold text-yellow-400">{draftPosts.length}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm">Auto-Posted</span>
