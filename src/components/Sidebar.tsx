@@ -130,7 +130,7 @@ export const Sidebar: React.FC = () => {
         </div>
 
         {/* Navigation */}
-        <nav className="p-4 space-y-2">
+        <nav className="p-4 space-y-2 flex-1 overflow-y-auto">
           {filteredNavItems.map((item, index) => (
             <motion.div
               key={item.path}
@@ -166,8 +166,8 @@ export const Sidebar: React.FC = () => {
           ))}
         </nav>
 
-        {/* User Info */}
-        <div className="absolute bottom-4 left-4 right-4">
+        {/* User Info - Fixed positioning */}
+        <div className="absolute bottom-0 left-0 right-0 p-4">
           {!sidebarCollapsed && user && (
             <motion.div
               initial={{ opacity: 0 }}
@@ -175,12 +175,12 @@ export const Sidebar: React.FC = () => {
               className="glass rounded-xl p-3"
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-neon-gradient rounded-full flex items-center justify-center text-white font-bold">
+                <div className="w-10 h-10 bg-neon-gradient rounded-full flex items-center justify-center text-white font-bold shrink-0">
                   {user.name.charAt(0)}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-medium text-sm truncate">{user.name}</div>
-                  <div className="text-xs text-muted-foreground capitalize">
+                  <div className="text-xs text-muted-foreground capitalize truncate">
                     {user.role.replace('_', ' ')}
                   </div>
                 </div>

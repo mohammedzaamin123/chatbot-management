@@ -40,6 +40,8 @@ import { Switch } from '../components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { useStore } from '../store/useStore';
 import { useToast } from '../hooks/use-toast';
+import { BusinessAISetup } from '../components/BusinessAISetup';
+import { SemiAutomaticContent } from '../components/SemiAutomaticContent';
 
 const PLATFORMS = [
   { id: 'instagram', name: 'Instagram', icon: Instagram, color: 'text-pink-500' },
@@ -56,41 +58,29 @@ export const Content: React.FC = () => {
   const [automationMode, setAutomationMode] = useState<'fully-auto' | 'semi-auto'>('fully-auto');
   const [isAutomationActive, setIsAutomationActive] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isBusinessSetupOpen, setIsBusinessSetupOpen] = useState(false);
   
   // Business Setup
-  const [businessProfile, setBusinessProfile] = useState({
-    industry: '',
-    description: '',
-    targetAudience: '',
-    brandVoice: '',
-    goals: '',
-    keywords: ''
-  });
+  const [businessProfile, setBusinessProfile] = useState<any>(null);
   const [isBusinessSetup, setIsBusinessSetup] = useState(false);
   
   // Automation Settings
   const [automationSettings, setAutomationSettings] = useState({
     platforms: [] as string[],
-    postFrequency: 'daily', // daily, weekly, bi-weekly
+    postFrequency: 'daily',
     contentTypes: ['text', 'image', 'video'] as string[],
     postingTimes: ['09:00', '15:00', '19:00'],
     weekdays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
     approvalRequired: true
   });
 
-  const handleBusinessSetup = () => {
-    if (!businessProfile.industry || !businessProfile.description) {
-      toast({
-        title: "Setup Required",
-        description: "Please fill in at least industry and business description."
-      });
-      return;
-    }
-    
+  const handleBusinessSetup = (profile: any) => {
+    setBusinessProfile(profile);
     setIsBusinessSetup(true);
+    setIsBusinessSetupOpen(false);
     toast({
-      title: "Business Profile Created",
-      description: "AI has learned your business. Ready for automation setup."
+      title: "Business AI Trained Successfully!",
+      description: "Your AI assistant now understands your business and is ready to create content."
     });
   };
 
@@ -109,7 +99,6 @@ export const Content: React.FC = () => {
       description: `${automationMode === 'fully-auto' ? 'Fully' : 'Semi'}-automated social media management is now active.`
     });
 
-    // Simulate initial content generation
     handleGenerateContent();
   };
 
@@ -137,24 +126,27 @@ export const Content: React.FC = () => {
         let content = '';
         let media: string[] = [];
         
-        // Generate content based on business profile
-        const topics = [
-          `${businessProfile.industry} insights`,
-          `${businessProfile.goals} strategies`,
-          `${businessProfile.targetAudience} tips`,
-          `${businessProfile.keywords} trends`
-        ];
-        
-        const selectedTopic = topics[Math.floor(Math.random() * topics.length)];
-        
-        if (mediaType === 'video') {
-          content = `🎥 ${businessProfile.brandVoice} video about ${selectedTopic}. Engaging content designed for ${businessProfile.targetAudience} to drive ${businessProfile.goals}.`;
-          media = [`https://sample-videos.com/zip/10/mp4/SampleVideo_${Date.now() + i}.mp4`];
-        } else if (mediaType === 'image') {
-          content = `📸 Visual showcase of ${selectedTopic}. ${businessProfile.brandVoice} content crafted for ${businessProfile.targetAudience}.`;
-          media = [`https://images.unsplash.com/photo-${Date.now() + i}?w=1080&h=1080&fit=crop`];
+        if (businessProfile) {
+          const topics = [
+            `${businessProfile.industry} insights`,
+            `${businessProfile.goals} strategies`,
+            `${businessProfile.targetAudience} tips`,
+            `${businessProfile.keywords} trends`
+          ];
+          
+          const selectedTopic = topics[Math.floor(Math.random() * topics.length)];
+          
+          if (mediaType === 'video') {
+            content = `🎥 ${businessProfile.brandVoice} video about ${selectedTopic}. Engaging content designed for ${businessProfile.targetAudience} to drive ${businessProfile.goals}.`;
+            media = [`https://sample-videos.com/zip/10/mp4/SampleVideo_${Date.now() + i}.mp4`];
+          } else if (mediaType === 'image') {
+            content = `📸 Visual showcase of ${selectedTopic}. ${businessProfile.brandVoice} content crafted for ${businessProfile.targetAudience}.`;
+            media = [`https://images.unsplash.com/photo-${Date.now() + i}?w=1080&h=1080&fit=crop`];
+          } else {
+            content = `✨ ${businessProfile.brandVoice} post about ${selectedTopic}. Perfect for ${businessProfile.targetAudience} interested in ${businessProfile.industry}.`;
+          }
         } else {
-          content = `✨ ${businessProfile.brandVoice} post about ${selectedTopic}. Perfect for ${businessProfile.targetAudience} interested in ${businessProfile.industry}.`;
+          content = `🚀 Automated content post #${i + 1}. Engaging social media content created by AI.`;
         }
 
         addDraftPost({
@@ -176,7 +168,6 @@ export const Content: React.FC = () => {
   const handleAutoApprove = (draftId: string) => {
     const draft = draftPosts.find(p => p.id === draftId);
     if (draft) {
-      // Auto-schedule based on settings
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       const randomTime = automationSettings.postingTimes[Math.floor(Math.random() * automationSettings.postingTimes.length)];
@@ -209,7 +200,7 @@ export const Content: React.FC = () => {
         className="text-center space-y-4"
       >
         <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-          Automated Social Media Manager
+          AI Social Media Manager
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
           Fully automated and semi-automated social media management powered by AI
@@ -237,87 +228,24 @@ export const Content: React.FC = () => {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Brain className="w-5 h-5 text-purple-400" />
-                      Business AI Training
+                      Business AI Training Required
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label>Industry</Label>
-                        <Input
-                          placeholder="e.g., Technology, Healthcare, E-commerce"
-                          value={businessProfile.industry}
-                          onChange={(e) => setBusinessProfile(prev => ({ ...prev, industry: e.target.value }))}
-                          className="bg-black/20 border-white/20"
-                        />
-                      </div>
-                      <div>
-                        <Label>Target Audience</Label>
-                        <Input
-                          placeholder="e.g., Small business owners, Tech professionals"
-                          value={businessProfile.targetAudience}
-                          onChange={(e) => setBusinessProfile(prev => ({ ...prev, targetAudience: e.target.value }))}
-                          className="bg-black/20 border-white/20"
-                        />
-                      </div>
+                  <CardContent className="space-y-4 text-center py-8">
+                    <div className="max-w-md mx-auto space-y-4">
+                      <Brain className="w-16 h-16 text-purple-400 mx-auto" />
+                      <h3 className="text-xl font-semibold">Train Your Business AI</h3>
+                      <p className="text-muted-foreground">
+                        Let AI learn about your business, audience, and goals to create personalized content automatically.
+                      </p>
+                      <Button 
+                        onClick={() => setIsBusinessSetupOpen(true)}
+                        className="bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600"
+                      >
+                        <Brain className="w-4 h-4 mr-2" />
+                        Start AI Training
+                      </Button>
                     </div>
-                    
-                    <div>
-                      <Label>Business Description</Label>
-                      <Textarea
-                        placeholder="Describe your business, products, and services"
-                        value={businessProfile.description}
-                        onChange={(e) => setBusinessProfile(prev => ({ ...prev, description: e.target.value }))}
-                        className="bg-black/20 border-white/20 h-20"
-                      />
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label>Brand Voice</Label>
-                        <Select value={businessProfile.brandVoice} onValueChange={(value) => setBusinessProfile(prev => ({ ...prev, brandVoice: value }))}>
-                          <SelectTrigger className="bg-black/20 border-white/20">
-                            <SelectValue placeholder="Select brand voice" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-gray-900 border-white/20">
-                            <SelectItem value="professional">Professional</SelectItem>
-                            <SelectItem value="friendly">Friendly</SelectItem>
-                            <SelectItem value="casual">Casual</SelectItem>
-                            <SelectItem value="authoritative">Authoritative</SelectItem>
-                            <SelectItem value="innovative">Innovative</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label>Main Goals</Label>
-                        <Select value={businessProfile.goals} onValueChange={(value) => setBusinessProfile(prev => ({ ...prev, goals: value }))}>
-                          <SelectTrigger className="bg-black/20 border-white/20">
-                            <SelectValue placeholder="Select main goal" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-gray-900 border-white/20">
-                            <SelectItem value="brand-awareness">Brand Awareness</SelectItem>
-                            <SelectItem value="lead-generation">Lead Generation</SelectItem>
-                            <SelectItem value="sales">Drive Sales</SelectItem>
-                            <SelectItem value="engagement">Increase Engagement</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <Label>Keywords & Topics</Label>
-                      <Input
-                        placeholder="e.g., AI, automation, business growth, productivity"
-                        value={businessProfile.keywords}
-                        onChange={(e) => setBusinessProfile(prev => ({ ...prev, keywords: e.target.value }))}
-                        className="bg-black/20 border-white/20"
-                      />
-                    </div>
-                    
-                    <Button onClick={handleBusinessSetup} className="w-full bg-gradient-to-r from-purple-500 to-indigo-500">
-                      <Brain className="w-4 h-4 mr-2" />
-                      Train Business AI
-                    </Button>
                   </CardContent>
                 </Card>
               ) : (
@@ -545,46 +473,18 @@ export const Content: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="semi-auto" className="space-y-6">
-          <Card className="glass border-white/10">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Settings className="w-5 h-5 text-blue-400" />
-                Semi-Automated Mode
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-center py-12">
-              <div className="max-w-md mx-auto space-y-4">
-                <Target className="w-16 h-16 text-blue-400 mx-auto" />
-                <h3 className="text-xl font-semibold">Semi-Automated Features</h3>
-                <p className="text-muted-foreground">
-                  Manual content creation with AI assistance, approval workflows, and scheduled publishing.
-                </p>
-                <div className="space-y-2 text-left">
-                  <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle className="w-4 h-4 text-green-400" />
-                    AI content suggestions
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle className="w-4 h-4 text-green-400" />
-                    Manual review and editing
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle className="w-4 h-4 text-green-400" />
-                    Approval workflows
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle className="w-4 h-4 text-green-400" />
-                    Scheduled publishing
-                  </div>
-                </div>
-                <Button className="w-full bg-gradient-to-r from-blue-500 to-indigo-500">
-                  Coming Soon
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <SemiAutomaticContent />
         </TabsContent>
       </Tabs>
+
+      {/* Business AI Setup Dialog */}
+      <BusinessAISetup
+        isOpen={isBusinessSetupOpen}
+        onClose={() => set
+
+isBusinessSetupOpen(false)}
+        onComplete={handleBusinessSetup}
+      />
     </div>
   );
 };
