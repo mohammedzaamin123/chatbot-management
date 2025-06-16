@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -39,6 +40,7 @@ export const Chatbots: React.FC = () => {
     addChatbot({
       name: formData.name,
       status: 'inactive',
+      platform: 'WhatsApp', // Added missing platform property
       model: formData.model as any,
       conversations: 0,
       system_prompt: formData.system_prompt,
