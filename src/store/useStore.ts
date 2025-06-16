@@ -1,3 +1,4 @@
+
 import { create } from 'zustand';
 
 interface DraftPost {
@@ -38,13 +39,35 @@ interface Tenant {
   id: string;
   name: string;
   plan: 'free' | 'pro' | 'enterprise';
+  usage: {
+    messages: number;
+    posts: number;
+    storage: number;
+  };
+  limits: {
+    messages: number;
+    posts: number;
+    storage: number;
+  };
+  is_active: boolean;
+  created_at: string;
 }
 
 interface Chatbot {
   id: string;
   name: string;
-  status: 'active' | 'inactive';
+  status: 'active' | 'inactive' | 'training';
   platform: string;
+  model: 'gpt-4o' | 'claude' | 'gemini';
+  conversations: number;
+  system_prompt: string;
+  greeting: string;
+  database_config?: {
+    connection_id: string;
+    permissions: ('READ' | 'WRITE' | 'UPDATE' | 'DELETE')[];
+    collection?: string;
+  };
+  created_at: string;
 }
 
 interface Campaign {
@@ -52,19 +75,31 @@ interface Campaign {
   name: string;
   status: 'active' | 'paused' | 'completed';
   budget: number;
+  platform: 'meta' | 'google' | 'all';
+  spent: number;
+  reach: number;
+  ctr: number;
+  roi: number;
+  created_at: string;
 }
 
 interface Message {
   id: string;
   content: string;
-  platform: string;
-  status: 'unread' | 'read';
+  platform: 'whatsapp' | 'instagram' | 'telegram' | 'facebook';
+  status: 'unread' | 'read' | 'replied';
+  from: string;
+  timestamp: string;
+  assigned_to?: string;
 }
 
 interface Analytics {
   totalPosts: number;
   engagement: number;
   reach: number;
+  activeUsers: number;
+  totalMessages: number;
+  responseTime: number;
 }
 
 interface Store {
@@ -94,19 +129,19 @@ interface Store {
 
   // Other entities
   chatbots: Chatbot[];
-  addChatbot: (chatbot: Omit<Chatbot, 'id'>) => void;
+  addChatbot: (chatbot: Omit<Chatbot, 'id' | 'created_at'>) => void;
   updateChatbot: (id: string, updates: Partial<Chatbot>) => void;
   deleteChatbot: (id: string) => void;
 
   campaigns: Campaign[];
-  addCampaign: (campaign: Omit<Campaign, 'id'>) => void;
+  addCampaign: (campaign: Omit<Campaign, 'id' | 'created_at'>) => void;
   updateCampaign: (id: string, updates: Partial<Campaign>) => void;
 
   messages: Message[];
   updateMessage: (id: string, updates: Partial<Message>) => void;
 
   tenants: Tenant[];
-  addTenant: (tenant: Omit<Tenant, 'id'>) => void;
+  addTenant: (tenant: Omit<Tenant, 'id' | 'created_at'>) => void;
   updateTenant: (id: string, updates: Partial<Tenant>) => void;
   deleteTenant: (id: string) => void;
 
@@ -173,7 +208,11 @@ export const useStore = create<Store>((set) => ({
   currentTenant: {
     id: '1',
     name: 'ChronoSync AI',
-    plan: 'enterprise'
+    plan: 'enterprise',
+    usage: { messages: 15420, posts: 245, storage: 12.5 },
+    limits: { messages: 100000, posts: 5000, storage: 50 },
+    is_active: true,
+    created_at: new Date().toISOString()
   },
 
   // Database
@@ -210,6 +249,7 @@ export const useStore = create<Store>((set) => ({
         {
           ...chatbot,
           id: Date.now().toString(),
+          created_at: new Date().toISOString(),
         },
       ],
     })),
@@ -234,6 +274,7 @@ export const useStore = create<Store>((set) => ({
         {
           ...campaign,
           id: Date.now().toString(),
+          created_at: new Date().toISOString(),
         },
       ],
     })),
@@ -261,6 +302,7 @@ export const useStore = create<Store>((set) => ({
         {
           ...tenant,
           id: Date.now().toString(),
+          created_at: new Date().toISOString(),
         },
       ],
     })),
@@ -280,7 +322,10 @@ export const useStore = create<Store>((set) => ({
   analytics: {
     totalPosts: 0,
     engagement: 0,
-    reach: 0
+    reach: 0,
+    activeUsers: 0,
+    totalMessages: 0,
+    responseTime: 0
   },
 
   initializeSampleData: () =>
@@ -309,12 +354,22 @@ export const useStore = create<Store>((set) => ({
           name: 'Customer Support Bot',
           status: 'active',
           platform: 'WhatsApp',
+          model: 'gpt-4o',
+          conversations: 1247,
+          system_prompt: 'You are a helpful customer support assistant.',
+          greeting: 'Hi! How can I help you today?',
+          created_at: new Date().toISOString(),
         },
         {
           id: '2',
           name: 'Sales Assistant',
           status: 'active',
           platform: 'Instagram',
+          model: 'claude',
+          conversations: 856,
+          system_prompt: 'You are a sales assistant helping customers with purchases.',
+          greeting: 'Welcome! I\'m here to help you find what you need.',
+          created_at: new Date().toISOString(),
         },
       ] : state.chatbots,
       campaigns: state.campaigns.length === 0 ? [
@@ -323,26 +378,42 @@ export const useStore = create<Store>((set) => ({
           name: 'Summer Sale 2024',
           status: 'active',
           budget: 5000,
+          platform: 'meta',
+          spent: 2340,
+          reach: 45000,
+          ctr: 2.8,
+          roi: 185,
+          created_at: new Date().toISOString(),
         },
         {
           id: '2',
           name: 'Brand Awareness',
           status: 'paused',
           budget: 3000,
+          platform: 'google',
+          spent: 1200,
+          reach: 28000,
+          ctr: 1.9,
+          roi: 142,
+          created_at: new Date().toISOString(),
         },
       ] : state.campaigns,
       messages: state.messages.length === 0 ? [
         {
           id: '1',
           content: 'Hello, I need help with my order',
-          platform: 'WhatsApp',
+          platform: 'whatsapp',
           status: 'unread',
+          from: 'John Doe',
+          timestamp: new Date().toISOString(),
         },
         {
           id: '2',
           content: 'Great product! When will you restock?',
-          platform: 'Instagram',
+          platform: 'instagram',
           status: 'read',
+          from: 'Sarah Wilson',
+          timestamp: new Date().toISOString(),
         },
       ] : state.messages,
       tenants: state.tenants.length === 0 ? [
@@ -350,17 +421,28 @@ export const useStore = create<Store>((set) => ({
           id: '1',
           name: 'ChronoSync AI',
           plan: 'enterprise',
+          usage: { messages: 15420, posts: 245, storage: 12.5 },
+          limits: { messages: 100000, posts: 5000, storage: 50 },
+          is_active: true,
+          created_at: new Date().toISOString(),
         },
         {
           id: '2',
           name: 'Demo Company',
           plan: 'pro',
+          usage: { messages: 2840, posts: 89, storage: 3.2 },
+          limits: { messages: 50000, posts: 1000, storage: 10 },
+          is_active: true,
+          created_at: new Date().toISOString(),
         },
       ] : state.tenants,
       analytics: {
         totalPosts: 45,
         engagement: 85.2,
         reach: 12500,
+        activeUsers: 278000,
+        totalMessages: 18260,
+        responseTime: 2.4,
       },
     })),
 }));
