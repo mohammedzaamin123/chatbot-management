@@ -2,12 +2,16 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Bell, Search, User, LogOut } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
+import { ThemeToggle } from './ThemeToggle';
 import { useStore } from '../store/useStore';
 
 export const Header: React.FC = () => {
   const { user, currentTenant } = useStore();
+  const location = useLocation();
+  const isMessagesPage = location.pathname === '/messages';
 
   return (
     <motion.header
@@ -37,6 +41,9 @@ export const Header: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* Theme Toggle - Hide on messages page */}
+        {!isMessagesPage && <ThemeToggle />}
 
         {/* Notifications */}
         <Button variant="ghost" size="sm" className="relative">
