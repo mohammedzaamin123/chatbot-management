@@ -26,11 +26,13 @@ import { Textarea } from '../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Checkbox } from '../components/ui/checkbox';
 import { useStore } from '../store/useStore';
+import { PlatformConnectionSettings } from '../components/PlatformConnectionSettings';
 
 export const Chatbots: React.FC = () => {
   const { chatbots, addChatbot, updateChatbot, deleteChatbot, databases } = useStore();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isPlatformSettingsOpen, setIsPlatformSettingsOpen] = useState(false);
   const [selectedBot, setSelectedBot] = useState<any>(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -40,17 +42,18 @@ export const Chatbots: React.FC = () => {
     database_connection: '',
     selected_collection: '',
     permissions: [] as string[],
-    platforms: [] as any[]
+    platforms: [] as any[],
+    selectedPlatformTypes: [] as string[]
   });
 
   const platformOptions = [
-    { value: 'whatsapp', label: 'WhatsApp', icon: MessageSquare, fields: ['webhook', 'phone_number'] },
-    { value: 'telegram', label: 'Telegram', icon: MessageSquare, fields: ['webhook', 'bot_token'] },
-    { value: 'instagram', label: 'Instagram', icon: MessageSquare, fields: ['webhook', 'api_token'] },
-    { value: 'facebook', label: 'Facebook', icon: MessageSquare, fields: ['webhook', 'api_token'] },
-    { value: 'discord', label: 'Discord', icon: MessageSquare, fields: ['webhook', 'bot_token'] },
-    { value: 'slack', label: 'Slack', icon: MessageSquare, fields: ['webhook', 'bot_token'] },
-    { value: 'website', label: 'Website Widget', icon: Globe, fields: ['webhook'] }
+    { value: 'whatsapp', label: 'WhatsApp', icon: MessageSquare },
+    { value: 'telegram', label: 'Telegram', icon: MessageSquare },
+    { value: 'instagram', label: 'Instagram', icon: MessageSquare },
+    { value: 'facebook', label: 'Facebook', icon: MessageSquare },
+    { value: 'discord', label: 'Discord', icon: MessageSquare },
+    { value: 'slack', label: 'Slack', icon: MessageSquare },
+    { value: 'website', label: 'Website Widget', icon: Globe }
   ];
 
   const handleCreateBot = () => {
@@ -105,7 +108,8 @@ export const Chatbots: React.FC = () => {
       database_connection: '',
       selected_collection: '',
       permissions: [],
-      platforms: []
+      platforms: [],
+      selectedPlatformTypes: []
     });
   };
 
@@ -119,7 +123,8 @@ export const Chatbots: React.FC = () => {
       database_connection: bot.database_config?.connection_id || '',
       selected_collection: bot.database_config?.collection || '',
       permissions: bot.database_config?.permissions || [],
-      platforms: bot.platforms || []
+      platforms: bot.platforms || [],
+      selectedPlatformTypes: (bot.platforms || []).map((p: any) => p.platform)
     });
     setIsSettingsOpen(true);
   };
@@ -133,53 +138,31 @@ export const Chatbots: React.FC = () => {
     }));
   };
 
-  const addPlatform = () => {
-    setFormData(prev => ({
-      ...prev,
-      platforms: [
-        ...prev.platforms,
-        {
-          platform: 'whatsapp',
+  const togglePlatformType = (platformType: string) => {
+    setFormData(prev => {
+      const isSelected = prev.selectedPlatformTypes.includes(platformType);
+      const newSelectedTypes = isSelected
+        ? prev.selectedPlatformTypes.filter(p => p !== platformType)
+        : [...prev.selectedPlatformTypes, platformType];
+
+      // Update platforms array based on selected types
+      const newPlatforms = newSelectedTypes.map(type => {
+        const existingPlatform = prev.platforms.find(p => p.platform === type);
+        return existingPlatform || {
+          platform: type,
           webhook: { url: '', enabled: true },
           phone_number: '',
           bot_token: '',
           api_token: ''
-        }
-      ]
-    }));
-  };
+        };
+      });
 
-  const removePlatform = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      platforms: prev.platforms.filter((_, i) => i !== index)
-    }));
-  };
-
-  const updatePlatform = (index: number, field: string, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      platforms: prev.platforms.map((platform, i) => 
-        i === index ? { ...platform, [field]: value } : platform
-      )
-    }));
-  };
-
-  const updatePlatformWebhook = (index: number, webhookField: string, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      platforms: prev.platforms.map((platform, i) => 
-        i === index 
-          ? { 
-              ...platform, 
-              webhook: { 
-                ...platform.webhook, 
-                [webhookField]: value 
-              } 
-            } 
-          : platform
-      )
-    }));
+      return {
+        ...prev,
+        selectedPlatformTypes: newSelectedTypes,
+        platforms: newPlatforms
+      };
+    });
   };
 
   const toggleBotStatus = (botId: string, currentStatus: string) => {
@@ -240,157 +223,70 @@ export const Chatbots: React.FC = () => {
         />
       </div>
 
-      {/* Platform Configuration */}
+      {/* Simplified Platform Selection */}
       <div className="border-t border-white/10 pt-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-semibold flex items-center gap-2">
             <Smartphone className="w-4 h-4" />
-            Deployment Platforms
+            Select Deployment Platforms
           </h3>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={addPlatform}
-            className="glass border-white/20"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Platform
-          </Button>
+          {formData.selectedPlatformTypes.length > 0 && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setIsPlatformSettingsOpen(true)}
+              className="glass border-white/20"
+            >
+              <Settings className="w-4 h-4 mr-2" />
+              Configure Connections
+            </Button>
+          )}
         </div>
 
-        <div className="space-y-4">
-          {formData.platforms.map((platform, index) => (
-            <Card key={index} className="glass border-white/20">
-              <CardContent className="p-4 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Smartphone className="w-4 h-4" />
-                    <span className="font-medium">Platform {index + 1}</span>
-                  </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => removePlatform(index)}
-                    className="glass border-white/20 hover:border-red-500"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>Platform Type</Label>
-                    <Select
-                      value={platform.platform}
-                      onValueChange={(value) => updatePlatform(index, 'platform', value)}
-                    >
-                      <SelectTrigger className="glass border-white/20">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="glass border-white/20 bg-black/90 z-50">
-                        {platformOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label>Webhook URL</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        value={platform.webhook?.url || ''}
-                        onChange={(e) => updatePlatformWebhook(index, 'url', e.target.value)}
-                        placeholder="https://your-domain.com/webhook"
-                        className="glass border-white/20 flex-1"
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => updatePlatformWebhook(index, 'enabled', !platform.webhook?.enabled)}
-                        className={`glass border-white/20 ${platform.webhook?.enabled ? 'bg-green-500/20' : ''}`}
-                      >
-                        <Link className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Platform-specific fields */}
-                <div className="grid grid-cols-2 gap-4">
-                  {platformOptions.find(p => p.value === platform.platform)?.fields.includes('phone_number') && (
-                    <div>
-                      <Label>Phone Number</Label>
-                      <Input
-                        value={platform.phone_number || ''}
-                        onChange={(e) => updatePlatform(index, 'phone_number', e.target.value)}
-                        placeholder="+1234567890"
-                        className="glass border-white/20"
-                      />
-                    </div>
-                  )}
-
-                  {platformOptions.find(p => p.value === platform.platform)?.fields.includes('bot_token') && (
-                    <div>
-                      <Label>Bot Token</Label>
-                      <Input
-                        value={platform.bot_token || ''}
-                        onChange={(e) => updatePlatform(index, 'bot_token', e.target.value)}
-                        placeholder="Enter bot token"
-                        className="glass border-white/20"
-                        type="password"
-                      />
-                    </div>
-                  )}
-
-                  {platformOptions.find(p => p.value === platform.platform)?.fields.includes('api_token') && (
-                    <div>
-                      <Label>API Token</Label>
-                      <Input
-                        value={platform.api_token || ''}
-                        onChange={(e) => updatePlatform(index, 'api_token', e.target.value)}
-                        placeholder="Enter API token"
-                        className="glass border-white/20"
-                        type="password"
-                      />
-                    </div>
-                  )}
-
-                  {platform.webhook?.url && (
-                    <div>
-                      <Label>Webhook Secret (Optional)</Label>
-                      <Input
-                        value={platform.webhook?.secret || ''}
-                        onChange={(e) => updatePlatformWebhook(index, 'secret', e.target.value)}
-                        placeholder="Enter webhook secret"
-                        className="glass border-white/20"
-                        type="password"
-                      />
-                    </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          {platformOptions.map((platform) => {
+            const Icon = platform.icon;
+            const isSelected = formData.selectedPlatformTypes.includes(platform.value);
+            
+            return (
+              <div
+                key={platform.value}
+                className={`relative p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                  isSelected 
+                    ? 'border-primary bg-primary/10' 
+                    : 'border-white/20 hover:border-white/40'
+                }`}
+                onClick={() => togglePlatformType(platform.value)}
+              >
+                <div className="flex items-center gap-3">
+                  <Icon className={`w-5 h-5 ${isSelected ? 'text-primary' : 'text-muted-foreground'}`} />
+                  <span className={`font-medium ${isSelected ? 'text-primary' : 'text-foreground'}`}>
+                    {platform.label}
+                  </span>
+                  {isSelected && (
+                    <Check className="w-4 h-4 text-primary ml-auto" />
                   )}
                 </div>
-
-                <div className="flex items-center gap-2">
-                  <Checkbox
-                    checked={platform.webhook?.enabled || false}
-                    onCheckedChange={(checked) => updatePlatformWebhook(index, 'enabled', checked)}
-                  />
-                  <Label className="text-sm">Enable webhook for this platform</Label>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+              </div>
+            );
+          })}
         </div>
 
-        {formData.platforms.length === 0 && (
-          <div className="text-center py-8 text-muted-foreground">
-            <Globe className="w-12 h-12 mx-auto mb-4 opacity-50" />
-            <p>No platforms configured yet. Add a platform to deploy your chatbot.</p>
+        {formData.selectedPlatformTypes.length === 0 && (
+          <div className="text-center py-6 text-muted-foreground">
+            <Globe className="w-8 h-8 mx-auto mb-2 opacity-50" />
+            <p className="text-sm">Select platforms where you want to deploy your chatbot</p>
+          </div>
+        )}
+
+        {formData.selectedPlatformTypes.length > 0 && (
+          <div className="mt-4 p-4 bg-white/5 rounded-lg">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Check className="w-4 h-4 text-green-500" />
+              Selected {formData.selectedPlatformTypes.length} platform(s). 
+              Click "Configure Connections" to set up webhooks and tokens.
+            </div>
           </div>
         )}
       </div>
@@ -525,7 +421,7 @@ export const Chatbots: React.FC = () => {
         </Dialog>
       </motion.div>
 
-      {/* Stats Overview - Moved above chatbots grid */}
+      {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="glass-strong border-white/10">
           <CardContent className="p-6">
@@ -583,6 +479,14 @@ export const Chatbots: React.FC = () => {
           {renderFormContent(true)}
         </DialogContent>
       </Dialog>
+
+      {/* Platform Connection Settings Dialog */}
+      <PlatformConnectionSettings
+        isOpen={isPlatformSettingsOpen}
+        onClose={() => setIsPlatformSettingsOpen(false)}
+        platforms={formData.platforms}
+        onUpdatePlatforms={(platforms) => setFormData(prev => ({ ...prev, platforms }))}
+      />
 
       {/* Chatbots Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
