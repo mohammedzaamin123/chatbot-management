@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -480,9 +479,7 @@ export const Content: React.FC = () => {
       {/* Business AI Setup Dialog */}
       <BusinessAISetup
         isOpen={isBusinessSetupOpen}
-        onClose={() => set
-
-isBusinessSetupOpen(false)}
+        onClose={() => setIsBusinessSetupOpen(false)}
         onComplete={handleBusinessSetup}
       />
     </div>
