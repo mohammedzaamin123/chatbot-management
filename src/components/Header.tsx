@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Bell, Search, User, LogOut, Settings, UserCircle, CreditCard, HelpCircle } from 'lucide-react';
@@ -6,67 +5,51 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { ThemeToggle } from './ThemeToggle';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from './ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { useStore } from '../store/useStore';
-
 export const Header: React.FC = () => {
-  const { user, currentTenant } = useStore();
+  const {
+    user,
+    currentTenant
+  } = useStore();
   const location = useLocation();
   const navigate = useNavigate();
   const isMessagesPage = location.pathname === '/messages';
-
   const handleProfileClick = () => {
     navigate('/profile');
   };
-
   const handleBillingClick = () => {
     navigate('/billing');
   };
-
   const handleSupportClick = () => {
     navigate('/support');
   };
-
   const handleLogout = () => {
     // Add logout logic here
     console.log('Logging out...');
   };
-
-  return (
-    <motion.header
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="h-16 glass-strong border-b border-white/10 backdrop-blur-2xl px-6 flex items-center justify-between"
-    >
+  return <motion.header initial={{
+    opacity: 0,
+    y: -20
+  }} animate={{
+    opacity: 1,
+    y: 0
+  }} className="h-16 glass-strong border-b border-white/10 backdrop-blur-2xl px-6 flex items-center justify-between">
       {/* Search */}
       <div className="flex-1 max-w-md">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            placeholder="Search anything..."
-            className="pl-10 glass border-white/20 focus:border-neon-purple"
-          />
+          <Input placeholder="Search anything..." className="pl-10 glass border-white/20 focus:border-neon-purple" />
         </div>
       </div>
 
       {/* Right Section */}
       <div className="flex items-center gap-4">
         {/* Tenant Info */}
-        {currentTenant && (
-          <div className="hidden md:block text-right">
-            <div className="font-medium text-sm">{currentTenant.name}</div>
-            <div className="text-xs text-muted-foreground capitalize">
-              {currentTenant.plan} plan
-            </div>
-          </div>
-        )}
+        {currentTenant && <div className="hidden md:block text-right">
+            
+            
+          </div>}
 
         {/* Theme Toggle - Hide on messages page */}
         {!isMessagesPage && <ThemeToggle />}
@@ -83,8 +66,7 @@ export const Header: React.FC = () => {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <div className="flex items-center gap-3 cursor-pointer">
-              {user && (
-                <>
+              {user && <>
                   <div className="hidden sm:block text-right">
                     <div className="font-medium text-sm">{user.name}</div>
                     <div className="text-xs text-muted-foreground">{user.email}</div>
@@ -93,14 +75,10 @@ export const Header: React.FC = () => {
                   <div className="w-10 h-10 bg-neon-gradient rounded-full flex items-center justify-center text-white font-bold hover:scale-105 transition-transform">
                     {user.name.charAt(0)}
                   </div>
-                </>
-              )}
+                </>}
             </div>
           </DropdownMenuTrigger>
-          <DropdownMenuContent 
-            className="w-56 glass-strong border-white/20 bg-background/95 backdrop-blur-md" 
-            align="end"
-          >
+          <DropdownMenuContent className="w-56 glass-strong border-white/20 bg-background/95 backdrop-blur-md" align="end">
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">{user?.name}</p>
@@ -132,6 +110,5 @@ export const Header: React.FC = () => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-    </motion.header>
-  );
+    </motion.header>;
 };
