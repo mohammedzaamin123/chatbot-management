@@ -117,6 +117,16 @@
     background: rgba(255, 255, 255, 0.3);
   }
 
+  /* Hide scrollbars in sidebar */
+  .sidebar-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .sidebar-scroll {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
   /* Glass effects */
   .glass {
     backdrop-filter: blur(20px) saturate(180%);

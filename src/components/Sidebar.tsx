@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { Button } from './ui/button';
+import { ScrollArea } from './ui/scroll-area';
 
 const navItems = [
   { 
@@ -98,9 +99,9 @@ export const Sidebar: React.FC = () => {
         sidebarCollapsed ? 'w-20' : 'w-64'
       }`}
     >
-      <div className="h-full glass-strong border-r border-white/10 backdrop-blur-2xl">
+      <div className="h-full glass-strong border-r border-white/10 backdrop-blur-2xl flex flex-col">
         {/* Logo & Toggle */}
-        <div className="p-4 border-b border-white/10">
+        <div className="p-4 border-b border-white/10 flex-shrink-0">
           <div className="flex items-center justify-between">
             {!sidebarCollapsed && (
               <motion.div
@@ -129,45 +130,49 @@ export const Sidebar: React.FC = () => {
           </div>
         </div>
 
-        {/* Navigation */}
-        <nav className="p-4 space-y-2 flex-1 overflow-y-auto">
-          {filteredNavItems.map((item, index) => (
-            <motion.div
-              key={item.path}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <NavLink
-                to={item.path}
-                className={({ isActive }) =>
-                  `nav-item group ${isActive ? 'active' : ''}`
-                }
-              >
-                <item.icon className="w-5 h-5 shrink-0" />
-                
-                {!sidebarCollapsed && (
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium text-sm">{item.label}</div>
-                    <div className="text-xs text-muted-foreground truncate">
-                      {item.description}
-                    </div>
-                  </div>
-                )}
-                
-                {sidebarCollapsed && (
-                  <div className="absolute left-full ml-4 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
-                    {item.label}
-                    <div className="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 bg-gray-900 rotate-45"></div>
-                  </div>
-                )}
-              </NavLink>
-            </motion.div>
-          ))}
-        </nav>
+        {/* Navigation - Scrollable area */}
+        <div className="flex-1 min-h-0">
+          <ScrollArea className="h-full [&>div>div]:!block">
+            <nav className="p-4 space-y-2">
+              {filteredNavItems.map((item, index) => (
+                <motion.div
+                  key={item.path}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <NavLink
+                    to={item.path}
+                    className={({ isActive }) =>
+                      `nav-item group ${isActive ? 'active' : ''}`
+                    }
+                  >
+                    <item.icon className="w-5 h-5 shrink-0" />
+                    
+                    {!sidebarCollapsed && (
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-sm">{item.label}</div>
+                        <div className="text-xs text-muted-foreground truncate">
+                          {item.description}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {sidebarCollapsed && (
+                      <div className="absolute left-full ml-4 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                        {item.label}
+                        <div className="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 bg-gray-900 rotate-45"></div>
+                      </div>
+                    )}
+                  </NavLink>
+                </motion.div>
+              ))}
+            </nav>
+          </ScrollArea>
+        </div>
 
         {/* User Info - Fixed positioning */}
-        <div className="absolute bottom-0 left-0 right-0 p-4">
+        <div className="p-4 flex-shrink-0">
           {!sidebarCollapsed && user && (
             <motion.div
               initial={{ opacity: 0 }}
