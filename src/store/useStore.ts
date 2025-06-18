@@ -56,7 +56,7 @@ interface Chatbot {
   id: string;
   name: string;
   status: 'active' | 'inactive' | 'training';
-  platforms: string[];
+  platform: string;
   model: 'gpt-4o' | 'claude' | 'gemini';
   conversations: number;
   system_prompt: string;
@@ -352,7 +352,7 @@ export const useStore = create<Store>((set) => ({
           id: '1',
           name: 'Customer Support Bot',
           status: 'active',
-          platforms: ['whatsapp', 'website'],
+          platform: 'WhatsApp',
           model: 'gpt-4o',
           conversations: 1247,
           system_prompt: 'You are a helpful customer support assistant.',
@@ -363,7 +363,7 @@ export const useStore = create<Store>((set) => ({
           id: '2',
           name: 'Sales Assistant',
           status: 'active',
-          platforms: ['instagram', 'facebook'],
+          platform: 'Instagram',
           model: 'claude',
           conversations: 856,
           system_prompt: 'You are a sales assistant helping customers with purchases.',
