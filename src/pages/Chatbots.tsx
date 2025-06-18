@@ -11,7 +11,8 @@ import {
   MessageSquare,
   Database,
   Brain,
-  Zap
+  Zap,
+  Check
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -20,12 +21,14 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import { Checkbox } from '../components/ui/checkbox';
 import { useStore } from '../store/useStore';
 
 export const Chatbots: React.FC = () => {
   const { chatbots, addChatbot, updateChatbot, deleteChatbot, databases } = useStore();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [selectedBot, setSelectedBot] = useState(null);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [selectedBot, setSelectedBot] = useState<any>(null);
   const [formData, setFormData] = useState({
     name: '',
     model: 'gpt-4o',
@@ -33,14 +36,14 @@ export const Chatbots: React.FC = () => {
     greeting: '',
     database_connection: '',
     selected_collection: '',
-    permissions: []
+    permissions: [] as string[]
   });
 
   const handleCreateBot = () => {
     addChatbot({
       name: formData.name,
       status: 'inactive',
-      platform: 'WhatsApp', // Added missing platform property
+      platform: 'WhatsApp',
       model: formData.model as any,
       conversations: 0,
       system_prompt: formData.system_prompt,
@@ -66,10 +69,195 @@ export const Chatbots: React.FC = () => {
     });
   };
 
+  const handleUpdateBot = () => {
+    if (selectedBot) {
+      updateChatbot(selectedBot.id, {
+        name: formData.name,
+        model: formData.model as any,
+        system_prompt: formData.system_prompt,
+        greeting: formData.greeting,
+        database_config: formData.database_connection
+          ? {
+              connection_id: formData.database_connection,
+              permissions: formData.permissions as any,
+              collection: formData.selected_collection || undefined
+            }
+          : undefined
+      });
+    }
+    setIsSettingsOpen(false);
+    setSelectedBot(null);
+  };
+
+  const openSettings = (bot: any) => {
+    setSelectedBot(bot);
+    setFormData({
+      name: bot.name,
+      model: bot.model,
+      system_prompt: bot.system_prompt,
+      greeting: bot.greeting,
+      database_connection: bot.database_config?.connection_id || '',
+      selected_collection: bot.database_config?.collection || '',
+      permissions: bot.database_config?.permissions || []
+    });
+    setIsSettingsOpen(true);
+  };
+
+  const togglePermission = (permission: string) => {
+    setFormData(prev => ({
+      ...prev,
+      permissions: prev.permissions.includes(permission)
+        ? prev.permissions.filter(p => p !== permission)
+        : [...prev.permissions, permission]
+    }));
+  };
+
   const toggleBotStatus = (botId: string, currentStatus: string) => {
     const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
     updateChatbot(botId, { status: newStatus });
   };
+
+  const renderFormContent = (isEdit: boolean = false) => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="name">Chatbot Name</Label>
+          <Input
+            id="name"
+            value={formData.name}
+            onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+            placeholder="Customer Support AI"
+            className="glass border-white/20"
+          />
+        </div>
+        <div>
+          <Label htmlFor="model">AI Model</Label>
+          <Select
+            value={formData.model}
+            onValueChange={(value) => setFormData(prev => ({ ...prev, model: value }))}
+          >
+            <SelectTrigger className="glass border-white/20">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="glass border-white/20 bg-black/90 z-50">
+              <SelectItem value="gpt-4o">GPT-4o (Recommended)</SelectItem>
+              <SelectItem value="claude">Claude 3.5 Sonnet</SelectItem>
+              <SelectItem value="gemini">Gemini Pro</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+      
+      <div>
+        <Label htmlFor="greeting">Greeting Message</Label>
+        <Input
+          id="greeting"
+          value={formData.greeting}
+          onChange={(e) => setFormData(prev => ({ ...prev, greeting: e.target.value }))}
+          placeholder="Hi! How can I help you today?"
+          className="glass border-white/20"
+        />
+      </div>
+      
+      <div>
+        <Label htmlFor="system_prompt">System Prompt</Label>
+        <Textarea
+          id="system_prompt"
+          value={formData.system_prompt}
+          onChange={(e) => setFormData(prev => ({ ...prev, system_prompt: e.target.value }))}
+          placeholder="You are a helpful customer support assistant..."
+          className="glass border-white/20 h-24"
+        />
+      </div>
+      
+      <div className="border-t border-white/10 pt-6">
+        <h3 className="font-semibold mb-4 flex items-center gap-2">
+          <Database className="w-4 h-4" />
+          Database Integration
+        </h3>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="database">Connect Database</Label>
+            <Select
+              value={formData.database_connection}
+              onValueChange={(value) => {
+                setFormData(prev => ({
+                  ...prev,
+                  database_connection: value,
+                  selected_collection: ''
+                }));
+              }}
+            >
+              <SelectTrigger className="glass border-white/20">
+                <SelectValue placeholder="Select database" />
+              </SelectTrigger>
+              <SelectContent className="glass border-white/20 bg-black/90 z-50">
+                {databases.map((db) => (
+                  <SelectItem key={db.id} value={db.id}>{db.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label>Collection</Label>
+            <Select
+              value={formData.selected_collection}
+              onValueChange={(collection) => setFormData(prev => ({
+                ...prev,
+                selected_collection: collection
+              }))}
+              disabled={
+                !formData.database_connection ||
+                !databases.find(db => db.id === formData.database_connection)
+              }
+            >
+              <SelectTrigger className="glass border-white/20">
+                <SelectValue placeholder="Choose collection" />
+              </SelectTrigger>
+              <SelectContent className="glass border-white/20 bg-black/90 z-50">
+                {(databases.find(db => db.id === formData.database_connection)?.collections || []).map((coll) => (
+                  <SelectItem key={coll} value={coll}>{coll}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        
+        <div className="mt-4">
+          <Label className="text-sm font-medium mb-3 block">Database Permissions</Label>
+          <div className="grid grid-cols-2 gap-3">
+            {['READ', 'WRITE', 'UPDATE', 'DELETE'].map((perm) => (
+              <div key={perm} className="flex items-center space-x-2">
+                <Checkbox
+                  id={perm}
+                  checked={formData.permissions.includes(perm)}
+                  onCheckedChange={() => togglePermission(perm)}
+                />
+                <Label htmlFor={perm} className="text-sm cursor-pointer">
+                  {perm}
+                </Label>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      
+      <div className="flex justify-end gap-4">
+        <Button 
+          variant="outline" 
+          onClick={() => isEdit ? setIsSettingsOpen(false) : setIsCreateOpen(false)}
+        >
+          Cancel
+        </Button>
+        <Button 
+          onClick={isEdit ? handleUpdateBot : handleCreateBot} 
+          className="btn-primary"
+        >
+          {isEdit ? 'Update Chatbot' : 'Create Chatbot'}
+        </Button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="space-y-8">
@@ -95,149 +283,24 @@ export const Chatbots: React.FC = () => {
               Create Chatbot
             </Button>
           </DialogTrigger>
-          <DialogContent className="glass-strong border-white/20 max-w-2xl">
+          <DialogContent className="glass-strong border-white/20 max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="neon-text">Create New Chatbot</DialogTitle>
             </DialogHeader>
-            <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="name">Chatbot Name</Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    placeholder="Customer Support AI"
-                    className="glass border-white/20"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="model">AI Model</Label>
-                  <Select
-                    value={formData.model}
-                    onValueChange={(value) => setFormData(prev => ({ ...prev, model: value }))}
-                  >
-                    <SelectTrigger className="glass border-white/20">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="glass border-white/20">
-                      <SelectItem value="gpt-4o">GPT-4o (Recommended)</SelectItem>
-                      <SelectItem value="claude">Claude 3.5 Sonnet</SelectItem>
-                      <SelectItem value="gemini">Gemini Pro</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              
-              <div>
-                <Label htmlFor="greeting">Greeting Message</Label>
-                <Input
-                  id="greeting"
-                  value={formData.greeting}
-                  onChange={(e) => setFormData(prev => ({ ...prev, greeting: e.target.value }))}
-                  placeholder="Hi! How can I help you today?"
-                  className="glass border-white/20"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="system_prompt">System Prompt</Label>
-                <Textarea
-                  id="system_prompt"
-                  value={formData.system_prompt}
-                  onChange={(e) => setFormData(prev => ({ ...prev, system_prompt: e.target.value }))}
-                  placeholder="You are a helpful customer support assistant..."
-                  className="glass border-white/20 h-24"
-                />
-              </div>
-              
-              <div className="border-t border-white/10 pt-6">
-                <h3 className="font-semibold mb-4 flex items-center gap-2">
-                  <Database className="w-4 h-4" />
-                  Database Integration
-                </h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="database">Connect Database</Label>
-                    <Select
-                      value={formData.database_connection}
-                      onValueChange={(value) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          database_connection: value,
-                          selected_collection: ''
-                        }));
-                      }}
-                    >
-                      <SelectTrigger className="glass border-white/20">
-                        <SelectValue placeholder="Select database" />
-                      </SelectTrigger>
-                      <SelectContent className="glass border-white/20">
-                        {databases.map((db) => (
-                          <SelectItem key={db.id} value={db.id}>{db.name}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label>Collection</Label>
-                    <Select
-                      value={formData.selected_collection}
-                      onValueChange={(collection) => setFormData(prev => ({
-                        ...prev,
-                        selected_collection: collection
-                      }))}
-                      disabled={
-                        !formData.database_connection ||
-                        !databases.find(db => db.id === formData.database_connection)
-                      }
-                    >
-                      <SelectTrigger className="glass border-white/20">
-                        <SelectValue placeholder="Choose collection" />
-                      </SelectTrigger>
-                      <SelectContent className="glass border-white/20">
-                        {(databases.find(db => db.id === formData.database_connection)?.collections || []).map((coll) => (
-                          <SelectItem key={coll} value={coll}>{coll}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="flex gap-2 mt-2">
-                  {['READ', 'WRITE', 'UPDATE', 'DELETE'].map((perm) => (
-                    <Button
-                      key={perm}
-                      variant="outline"
-                      size="sm"
-                      className={`glass border-white/20 ${
-                        formData.permissions.includes(perm) ? 'bg-neon-purple' : ''
-                      }`}
-                      onClick={() => {
-                        setFormData(prev => ({
-                          ...prev,
-                          permissions: prev.permissions.includes(perm)
-                            ? prev.permissions.filter(p => p !== perm)
-                            : [...prev.permissions, perm]
-                        }));
-                      }}
-                    >
-                      {perm}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-              <div className="flex justify-end gap-4">
-                <Button variant="outline" onClick={() => setIsCreateOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleCreateBot} className="btn-primary">
-                  Create Chatbot
-                </Button>
-              </div>
-            </div>
+            {renderFormContent(false)}
           </DialogContent>
         </Dialog>
       </motion.div>
+
+      {/* Settings Dialog */}
+      <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+        <DialogContent className="glass-strong border-white/20 max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="neon-text">Edit Chatbot Settings</DialogTitle>
+          </DialogHeader>
+          {renderFormContent(true)}
+        </DialogContent>
+      </Dialog>
 
       {/* Chatbots Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -287,6 +350,36 @@ export const Chatbots: React.FC = () => {
                   )}
                 </div>
                 
+                {/* Chatbot Overview */}
+                <div className="space-y-2 bg-white/5 p-3 rounded-lg">
+                  <h4 className="text-sm font-medium">Overview:</h4>
+                  <div className="text-xs space-y-1">
+                    <div><strong>Model:</strong> {bot.model.toUpperCase()}</div>
+                    <div><strong>Platform:</strong> {bot.platform}</div>
+                    {bot.database_config && (
+                      <>
+                        <div><strong>Database:</strong> {databases.find(db => db.id === bot.database_config?.connection_id)?.name || 'Connected'}</div>
+                        {bot.database_config.collection && (
+                          <div><strong>Collection:</strong> {bot.database_config.collection}</div>
+                        )}
+                        {bot.database_config.permissions && bot.database_config.permissions.length > 0 && (
+                          <div className="flex items-center gap-1">
+                            <strong>Permissions:</strong>
+                            <div className="flex gap-1">
+                              {bot.database_config.permissions.map((perm) => (
+                                <span key={perm} className="inline-flex items-center gap-1 px-1 py-0.5 bg-neon-purple/20 text-neon-purple rounded text-xs">
+                                  <Check className="w-3 h-3" />
+                                  {perm}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+                
                 <div className="space-y-2">
                   <div className="text-sm">
                     <strong>Greeting:</strong> {bot.greeting}
@@ -315,7 +408,12 @@ export const Chatbots: React.FC = () => {
                       </>
                     )}
                   </Button>
-                  <Button size="sm" variant="outline" className="glass border-white/20">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="glass border-white/20"
+                    onClick={() => openSettings(bot)}
+                  >
                     <Settings className="w-4 h-4" />
                   </Button>
                   <Button 
