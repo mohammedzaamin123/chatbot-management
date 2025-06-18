@@ -15,6 +15,9 @@ import Automation from "./pages/Automation";
 import Database from "./pages/Database";
 import Tenants from "./pages/Tenants";
 import Settings from "./pages/Settings";
+import Profile from "./pages/Profile";
+import Billing from "./pages/Billing";
+import Support from "./pages/Support";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -37,6 +40,9 @@ const App = () => (
             <Route path="/database" element={<Database />} />
             <Route path="/tenants" element={<Tenants />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/billing" element={<Billing />} />
+            <Route path="/support" element={<Support />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>
