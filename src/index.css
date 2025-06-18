@@ -231,36 +231,6 @@
   @apply bg-orange-900/30 text-orange-400 border-orange-800;
 }
 
-/* Neon effects - Fixed for light mode */
-.neon-text {
-  color: #007AFF;
-  text-shadow: 0 0 5px rgba(0, 122, 255, 0.3);
-}
-
-.dark .neon-text {
-  color: #00D4FF;
-  text-shadow: 
-    0 0 5px rgba(0, 212, 255, 0.5),
-    0 0 10px rgba(0, 212, 255, 0.3),
-    0 0 15px rgba(0, 212, 255, 0.2);
-}
-
-.neon-gradient {
-  background: linear-gradient(45deg, #007AFF, #0051D5);
-}
-
-.dark .neon-gradient {
-  background: linear-gradient(45deg, #00D4FF, #0099CC, #007AFF);
-}
-
-.bg-neon-gradient {
-  background: linear-gradient(45deg, #007AFF, #0051D5);
-}
-
-.dark .bg-neon-gradient {
-  background: linear-gradient(45deg, #00D4FF, #0099CC, #007AFF);
-}
-
 /* Smooth transitions */
 * {
   transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;

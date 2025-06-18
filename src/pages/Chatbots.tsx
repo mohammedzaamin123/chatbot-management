@@ -494,14 +494,14 @@ export const Chatbots: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      {/* Header - keep existing code */}
+      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6"
       >
         <div>
-          <h1 className="text-4xl font-bold neon-text mb-2">
+          <h1 className="text-4xl font-bold text-primary mb-2">
             AI Chatbots 🤖
           </h1>
           <p className="text-lg text-muted-foreground">
@@ -518,24 +518,73 @@ export const Chatbots: React.FC = () => {
           </DialogTrigger>
           <DialogContent className="glass-strong border-white/20 max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle className="neon-text">Create New Chatbot</DialogTitle>
+              <DialogTitle className="text-primary">Create New Chatbot</DialogTitle>
             </DialogHeader>
             {renderFormContent(false)}
           </DialogContent>
         </Dialog>
       </motion.div>
 
+      {/* Stats Overview - Moved above chatbots grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="glass-strong border-white/10">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+                <Brain className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold">{chatbots.length}</div>
+                <div className="text-sm text-muted-foreground">Total Chatbots</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="glass-strong border-white/10">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
+                <Zap className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold">
+                  {chatbots.filter(bot => bot.status === 'active').length}
+                </div>
+                <div className="text-sm text-muted-foreground">Active Bots</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="glass-strong border-white/10">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center">
+                <MessageSquare className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold">
+                  {chatbots.reduce((sum, bot) => sum + bot.conversations, 0)}
+                </div>
+                <div className="text-sm text-muted-foreground">Total Conversations</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Settings Dialog */}
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
         <DialogContent className="glass-strong border-white/20 max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="neon-text">Edit Chatbot Settings</DialogTitle>
+            <DialogTitle className="text-primary">Edit Chatbot Settings</DialogTitle>
           </DialogHeader>
           {renderFormContent(true)}
         </DialogContent>
       </Dialog>
 
-      {/* Chatbots Grid - keep existing code but update platform display */}
+      {/* Chatbots Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {chatbots.map((bot, index) => (
           <motion.div
@@ -577,8 +626,8 @@ export const Chatbots: React.FC = () => {
                   </div>
                   {bot.database_config && (
                     <div className="flex items-center gap-1">
-                      <Database className="w-4 h-4 text-neon-purple" />
-                      <span className="text-xs text-neon-purple">DB Connected</span>
+                      <Database className="w-4 h-4 text-primary" />
+                      <span className="text-xs text-primary">DB Connected</span>
                     </div>
                   )}
                 </div>
@@ -589,7 +638,7 @@ export const Chatbots: React.FC = () => {
                   <div className="flex flex-wrap gap-2">
                     {bot.platforms && bot.platforms.length > 0 ? (
                       bot.platforms.map((platform, idx) => (
-                        <div key={idx} className="flex items-center gap-1 px-2 py-1 bg-neon-purple/20 text-neon-purple rounded text-xs">
+                        <div key={idx} className="flex items-center gap-1 px-2 py-1 bg-primary/20 text-primary rounded text-xs">
                           <Smartphone className="w-3 h-3" />
                           {platformOptions.find(p => p.value === platform.platform)?.label || platform.platform}
                           {platform.webhook?.enabled && (
@@ -603,7 +652,7 @@ export const Chatbots: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Bot Overview - keep existing code */}
+                {/* Bot Overview */}
                 <div className="space-y-2 bg-white/5 p-3 rounded-lg">
                   <h4 className="text-sm font-medium">Overview:</h4>
                   <div className="text-xs space-y-1">
@@ -620,7 +669,7 @@ export const Chatbots: React.FC = () => {
                             <strong>Permissions:</strong>
                             <div className="flex gap-1">
                               {bot.database_config.permissions.map((perm) => (
-                                <span key={perm} className="inline-flex items-center gap-1 px-1 py-0.5 bg-neon-purple/20 text-neon-purple rounded text-xs">
+                                <span key={perm} className="inline-flex items-center gap-1 px-1 py-0.5 bg-primary/20 text-primary rounded text-xs">
                                   <Check className="w-3 h-3" />
                                   {perm}
                                 </span>
@@ -678,14 +727,14 @@ export const Chatbots: React.FC = () => {
           </motion.div>
         ))}
         
-        {/* Create New Card - keep existing code */}
+        {/* Create New Card */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: chatbots.length * 0.1 }}
         >
           <Card 
-            className="metric-card h-full border-dashed border-2 border-white/20 cursor-pointer hover:border-neon-purple"
+            className="metric-card h-full border-dashed border-2 border-white/20 cursor-pointer hover:border-primary"
             onClick={() => setIsCreateOpen(true)}
           >
             <CardContent className="flex flex-col items-center justify-center h-full p-8">
@@ -699,55 +748,6 @@ export const Chatbots: React.FC = () => {
             </CardContent>
           </Card>
         </motion.div>
-      </div>
-
-      {/* Stats Overview - keep existing code */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="glass-strong border-white/10">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-                <Brain className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold">{chatbots.length}</div>
-                <div className="text-sm text-muted-foreground">Total Chatbots</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card className="glass-strong border-white/10">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
-                <Zap className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold">
-                  {chatbots.filter(bot => bot.status === 'active').length}
-                </div>
-                <div className="text-sm text-muted-foreground">Active Bots</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card className="glass-strong border-white/10">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center">
-                <MessageSquare className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold">
-                  {chatbots.reduce((sum, bot) => sum + bot.conversations, 0)}
-                </div>
-                <div className="text-sm text-muted-foreground">Total Conversations</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
