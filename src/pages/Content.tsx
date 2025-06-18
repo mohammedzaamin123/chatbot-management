@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -27,7 +28,8 @@ import {
   Target,
   Clock,
   Users,
-  BarChart3
+  BarChart3,
+  Edit3
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -81,6 +83,10 @@ export const Content: React.FC = () => {
       title: "Business AI Trained Successfully!",
       description: "Your AI assistant now understands your business and is ready to create content."
     });
+  };
+
+  const handleEditBusiness = () => {
+    setIsBusinessSetupOpen(true);
   };
 
   const handleStartAutomation = async () => {
@@ -220,172 +226,236 @@ export const Content: React.FC = () => {
 
         <TabsContent value="fully-auto" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Setup Section */}
+            {/* Main Setup Section */}
             <div className="lg:col-span-2 space-y-6">
               {!isBusinessSetup ? (
                 <Card className="glass border-white/10">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Brain className="w-5 h-5 text-purple-400" />
-                      Business AI Training Required
+                      <HelpCircle className="w-5 h-5 text-purple-400" />
+                      Let's Learn About Your Business
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4 text-center py-8">
-                    <div className="max-w-md mx-auto space-y-4">
-                      <Brain className="w-16 h-16 text-purple-400 mx-auto" />
-                      <h3 className="text-xl font-semibold">Train Your Business AI</h3>
-                      <p className="text-muted-foreground">
-                        Let AI learn about your business, audience, and goals to create personalized content automatically.
-                      </p>
+                  <CardContent className="space-y-6 py-8">
+                    <div className="text-center max-w-2xl mx-auto space-y-6">
+                      <div className="space-y-4">
+                        <Brain className="w-20 h-20 text-purple-400 mx-auto" />
+                        <h3 className="text-2xl font-semibold">AI Business Study</h3>
+                        <p className="text-muted-foreground text-lg">
+                          I'll ask you a few simple questions to understand your business, audience, and goals. 
+                          This helps me create personalized content that truly represents your brand.
+                        </p>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                        <div className="p-4 bg-purple-500/10 border border-purple-500/20 rounded-lg">
+                          <Target className="w-8 h-8 text-purple-400 mx-auto mb-2" />
+                          <h4 className="font-medium">Your Business</h4>
+                          <p className="text-sm text-muted-foreground">Industry, products, and goals</p>
+                        </div>
+                        <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                          <Users className="w-8 h-8 text-blue-400 mx-auto mb-2" />
+                          <h4 className="font-medium">Your Audience</h4>
+                          <p className="text-sm text-muted-foreground">Who you want to reach</p>
+                        </div>
+                        <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
+                          <Sparkles className="w-8 h-8 text-green-400 mx-auto mb-2" />
+                          <h4 className="font-medium">Your Voice</h4>
+                          <p className="text-sm text-muted-foreground">Brand tone and style</p>
+                        </div>
+                      </div>
+
                       <Button 
                         onClick={() => setIsBusinessSetupOpen(true)}
-                        className="bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600"
+                        size="lg"
+                        className="bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 px-8 py-3 text-lg"
                       >
-                        <Brain className="w-4 h-4 mr-2" />
-                        Start AI Training
+                        <Brain className="w-5 h-5 mr-2" />
+                        Start Business Study
+                        <ArrowRight className="w-5 h-5 ml-2" />
                       </Button>
                     </div>
                   </CardContent>
                 </Card>
               ) : (
-                <Card className="glass border-white/10">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Zap className="w-5 h-5 text-green-400" />
-                      Fully Automated System
-                      {isAutomationActive && (
-                        <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded-full text-xs font-medium">
-                          Active
-                        </span>
-                      )}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    {/* Platform Selection */}
-                    <div>
-                      <Label className="text-base font-medium mb-3 block">Social Media Platforms</Label>
-                      <div className="grid grid-cols-2 gap-3">
-                        {PLATFORMS.map((platform) => (
-                          <Button
-                            key={platform.id}
-                            variant="outline"
-                            className={`glass border-white/20 justify-start h-12 ${
-                              automationSettings.platforms.includes(platform.id) ? 'bg-purple-500/20 border-purple-400' : ''
-                            }`}
-                            onClick={() => {
-                              setAutomationSettings(prev => ({
-                                ...prev,
-                                platforms: prev.platforms.includes(platform.id)
-                                  ? prev.platforms.filter(p => p !== platform.id)
-                                  : [...prev.platforms, platform.id]
-                              }));
-                            }}
-                          >
-                            <platform.icon className={`w-5 h-5 mr-3 ${platform.color}`} />
-                            {platform.name}
-                          </Button>
-                        ))}
+                <>
+                  {/* Business Profile Summary */}
+                  <Card className="glass border-white/10">
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="flex items-center gap-2">
+                          <CheckCircle className="w-5 h-5 text-green-400" />
+                          Business Profile Active
+                        </CardTitle>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleEditBusiness}
+                          className="border-white/20 text-purple-400 hover:bg-purple-500/10"
+                        >
+                          <Edit3 className="w-4 h-4 mr-2" />
+                          Edit Business
+                        </Button>
                       </div>
-                    </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-lg">
+                          <p className="text-sm text-purple-400 font-medium">Industry</p>
+                          <p className="text-sm">{businessProfile.industry}</p>
+                        </div>
+                        <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                          <p className="text-sm text-blue-400 font-medium">Brand Voice</p>
+                          <p className="text-sm">{businessProfile.brandVoice}</p>
+                        </div>
+                        <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+                          <p className="text-sm text-green-400 font-medium">Main Goal</p>
+                          <p className="text-sm">{businessProfile.goals}</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
 
-                    {/* Automation Settings */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Automation Controls */}
+                  <Card className="glass border-white/10">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Zap className="w-5 h-5 text-green-400" />
+                        Automation Controls
+                        {isAutomationActive && (
+                          <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded-full text-xs font-medium">
+                            Active
+                          </span>
+                        )}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      {/* Platform Selection */}
                       <div>
-                        <Label>Post Frequency</Label>
-                        <Select value={automationSettings.postFrequency} onValueChange={(value) => setAutomationSettings(prev => ({ ...prev, postFrequency: value }))}>
-                          <SelectTrigger className="bg-black/20 border-white/20">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="bg-gray-900 border-white/20">
-                            <SelectItem value="daily">Daily (7 posts/week)</SelectItem>
-                            <SelectItem value="weekly">Weekly (3 posts/week)</SelectItem>
-                            <SelectItem value="bi-weekly">Bi-weekly (1 post/week)</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      <div>
-                        <Label>Content Types</Label>
-                        <div className="flex gap-2 mt-2">
-                          {[
-                            { id: 'text', label: 'Text', icon: MessageSquare },
-                            { id: 'image', label: 'Images', icon: Image },
-                            { id: 'video', label: 'Videos', icon: Video }
-                          ].map((type) => (
+                        <Label className="text-base font-medium mb-3 block">Social Media Platforms</Label>
+                        <div className="grid grid-cols-2 gap-3">
+                          {PLATFORMS.map((platform) => (
                             <Button
-                              key={type.id}
+                              key={platform.id}
                               variant="outline"
-                              size="sm"
-                              className={`${
-                                automationSettings.contentTypes.includes(type.id) ? 'bg-blue-500/20 border-blue-400' : 'border-white/20'
+                              className={`glass border-white/20 justify-start h-12 ${
+                                automationSettings.platforms.includes(platform.id) ? 'bg-purple-500/20 border-purple-400' : ''
                               }`}
                               onClick={() => {
                                 setAutomationSettings(prev => ({
                                   ...prev,
-                                  contentTypes: prev.contentTypes.includes(type.id)
-                                    ? prev.contentTypes.filter(t => t !== type.id)
-                                    : [...prev.contentTypes, type.id]
+                                  platforms: prev.platforms.includes(platform.id)
+                                    ? prev.platforms.filter(p => p !== platform.id)
+                                    : [...prev.platforms, platform.id]
                                 }));
                               }}
                             >
-                              <type.icon className="w-4 h-4" />
+                              <platform.icon className={`w-5 h-5 mr-3 ${platform.color}`} />
+                              {platform.name}
                             </Button>
                           ))}
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between">
-                        <Label>Approval Required</Label>
-                        <Switch
-                          checked={automationSettings.approvalRequired}
-                          onCheckedChange={(checked) => setAutomationSettings(prev => ({ ...prev, approvalRequired: checked }))}
-                        />
-                      </div>
-                    </div>
+                      {/* Quick Settings */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                          <Label>Post Frequency</Label>
+                          <Select value={automationSettings.postFrequency} onValueChange={(value) => setAutomationSettings(prev => ({ ...prev, postFrequency: value }))}>
+                            <SelectTrigger className="bg-black/20 border-white/20">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="bg-gray-900 border-white/20">
+                              <SelectItem value="daily">Daily</SelectItem>
+                              <SelectItem value="weekly">Weekly</SelectItem>
+                              <SelectItem value="bi-weekly">Bi-weekly</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div>
+                          <Label>Content Types</Label>
+                          <div className="flex gap-2 mt-2">
+                            {[
+                              { id: 'text', label: 'Text', icon: MessageSquare },
+                              { id: 'image', label: 'Images', icon: Image },
+                              { id: 'video', label: 'Videos', icon: Video }
+                            ].map((type) => (
+                              <Button
+                                key={type.id}
+                                variant="outline"
+                                size="sm"
+                                className={`${
+                                  automationSettings.contentTypes.includes(type.id) ? 'bg-blue-500/20 border-blue-400' : 'border-white/20'
+                                }`}
+                                onClick={() => {
+                                  setAutomationSettings(prev => ({
+                                    ...prev,
+                                    contentTypes: prev.contentTypes.includes(type.id)
+                                      ? prev.contentTypes.filter(t => t !== type.id)
+                                      : [...prev.contentTypes, type.id]
+                                  }));
+                                }}
+                              >
+                                <type.icon className="w-4 h-4" />
+                              </Button>
+                            ))}
+                          </div>
+                        </div>
 
-                    {/* Control Buttons */}
-                    <div className="flex gap-4">
-                      {!isAutomationActive ? (
-                        <Button 
-                          onClick={handleStartAutomation}
-                          className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 h-12"
-                          disabled={automationSettings.platforms.length === 0}
-                        >
-                          <Play className="w-5 h-5 mr-2" />
-                          Start Full Automation
-                        </Button>
-                      ) : (
-                        <>
+                        <div className="flex items-center justify-between">
+                          <Label>Approval Required</Label>
+                          <Switch
+                            checked={automationSettings.approvalRequired}
+                            onCheckedChange={(checked) => setAutomationSettings(prev => ({ ...prev, approvalRequired: checked }))}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Control Buttons */}
+                      <div className="flex gap-4">
+                        {!isAutomationActive ? (
                           <Button 
-                            onClick={handleStopAutomation}
-                            variant="outline"
-                            className="flex-1 border-red-500/20 text-red-400 hover:bg-red-500/10 h-12"
+                            onClick={handleStartAutomation}
+                            className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 h-12"
+                            disabled={automationSettings.platforms.length === 0}
                           >
-                            <Pause className="w-5 h-5 mr-2" />
-                            Pause Automation
+                            <Play className="w-5 h-5 mr-2" />
+                            Start Automation
                           </Button>
-                          <Button 
-                            onClick={handleGenerateContent}
-                            disabled={isGenerating}
-                            className="flex-1 bg-gradient-to-r from-purple-500 to-indigo-500 h-12"
-                          >
-                            {isGenerating ? (
-                              <>
-                                <div className="animate-spin w-5 h-5 border-2 border-white/30 border-t-white rounded-full mr-2"></div>
-                                Generating...
-                              </>
-                            ) : (
-                              <>
-                                <RotateCcw className="w-5 h-5 mr-2" />
-                                Generate Now
-                              </>
-                            )}
-                          </Button>
-                        </>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
+                        ) : (
+                          <>
+                            <Button 
+                              onClick={handleStopAutomation}
+                              variant="outline"
+                              className="flex-1 border-red-500/20 text-red-400 hover:bg-red-500/10 h-12"
+                            >
+                              <Pause className="w-5 h-5 mr-2" />
+                              Pause
+                            </Button>
+                            <Button 
+                              onClick={handleGenerateContent}
+                              disabled={isGenerating}
+                              className="flex-1 bg-gradient-to-r from-purple-500 to-indigo-500 h-12"
+                            >
+                              {isGenerating ? (
+                                <>
+                                  <div className="animate-spin w-5 h-5 border-2 border-white/30 border-t-white rounded-full mr-2"></div>
+                                  Generating...
+                                </>
+                              ) : (
+                                <>
+                                  <RotateCcw className="w-5 h-5 mr-2" />
+                                  Generate Now
+                                </>
+                              )}
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </>
               )}
             </div>
 
@@ -451,7 +521,7 @@ export const Content: React.FC = () => {
                             className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                           >
                             <CheckCircle className="w-4 h-4 mr-1" />
-                            Auto-Schedule
+                            Schedule
                           </Button>
                           <Button
                             size="sm"
