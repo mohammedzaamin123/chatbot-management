@@ -24,7 +24,7 @@ export const ThemeToggle: React.FC = () => {
       variant="outline"
       size="sm"
       onClick={toggleTheme}
-      className="glass border-apple-gray-200 hover:scale-105 transition-all duration-200 w-10 h-10 p-0"
+      className="glass border-border hover:scale-105 transition-all duration-200 w-10 h-10 p-0 hover:bg-accent"
     >
       {theme === 'light' ? (
         <Moon className="w-4 h-4" />

@@ -1,3 +1,4 @@
+
 import { create } from 'zustand';
 
 interface DraftPost {
@@ -205,10 +206,10 @@ export const useStore = create<Store>((set) => ({
       draftPosts: state.draftPosts.filter((post) => post.id !== id),
     })),
 
-  // UI State
+  // UI State - Fixed theme initialization
   sidebarCollapsed: false,
   setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
-  theme: 'dark',
+  theme: 'light',
   setTheme: (theme) => set({ theme }),
 
   // User & Tenant
