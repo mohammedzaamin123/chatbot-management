@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -12,7 +11,11 @@ import {
   Database,
   Brain,
   Zap,
-  Check
+  Check,
+  Smartphone,
+  Globe,
+  Link,
+  Shield
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -36,14 +39,25 @@ export const Chatbots: React.FC = () => {
     greeting: '',
     database_connection: '',
     selected_collection: '',
-    permissions: [] as string[]
+    permissions: [] as string[],
+    platforms: [] as any[]
   });
+
+  const platformOptions = [
+    { value: 'whatsapp', label: 'WhatsApp', icon: MessageSquare, fields: ['webhook', 'phone_number'] },
+    { value: 'telegram', label: 'Telegram', icon: MessageSquare, fields: ['webhook', 'bot_token'] },
+    { value: 'instagram', label: 'Instagram', icon: MessageSquare, fields: ['webhook', 'api_token'] },
+    { value: 'facebook', label: 'Facebook', icon: MessageSquare, fields: ['webhook', 'api_token'] },
+    { value: 'discord', label: 'Discord', icon: MessageSquare, fields: ['webhook', 'bot_token'] },
+    { value: 'slack', label: 'Slack', icon: MessageSquare, fields: ['webhook', 'bot_token'] },
+    { value: 'website', label: 'Website Widget', icon: Globe, fields: ['webhook'] }
+  ];
 
   const handleCreateBot = () => {
     addChatbot({
       name: formData.name,
       status: 'inactive',
-      platform: 'WhatsApp',
+      platforms: formData.platforms,
       model: formData.model as any,
       conversations: 0,
       system_prompt: formData.system_prompt,
@@ -58,15 +72,7 @@ export const Chatbots: React.FC = () => {
     });
 
     setIsCreateOpen(false);
-    setFormData({
-      name: '',
-      model: 'gpt-4o',
-      system_prompt: '',
-      greeting: '',
-      database_connection: '',
-      selected_collection: '',
-      permissions: []
-    });
+    resetForm();
   };
 
   const handleUpdateBot = () => {
@@ -76,6 +82,7 @@ export const Chatbots: React.FC = () => {
         model: formData.model as any,
         system_prompt: formData.system_prompt,
         greeting: formData.greeting,
+        platforms: formData.platforms,
         database_config: formData.database_connection
           ? {
               connection_id: formData.database_connection,
@@ -89,6 +96,19 @@ export const Chatbots: React.FC = () => {
     setSelectedBot(null);
   };
 
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      model: 'gpt-4o',
+      system_prompt: '',
+      greeting: '',
+      database_connection: '',
+      selected_collection: '',
+      permissions: [],
+      platforms: []
+    });
+  };
+
   const openSettings = (bot: any) => {
     setSelectedBot(bot);
     setFormData({
@@ -98,7 +118,8 @@ export const Chatbots: React.FC = () => {
       greeting: bot.greeting,
       database_connection: bot.database_config?.connection_id || '',
       selected_collection: bot.database_config?.collection || '',
-      permissions: bot.database_config?.permissions || []
+      permissions: bot.database_config?.permissions || [],
+      platforms: bot.platforms || []
     });
     setIsSettingsOpen(true);
   };
@@ -109,6 +130,55 @@ export const Chatbots: React.FC = () => {
       permissions: prev.permissions.includes(permission)
         ? prev.permissions.filter(p => p !== permission)
         : [...prev.permissions, permission]
+    }));
+  };
+
+  const addPlatform = () => {
+    setFormData(prev => ({
+      ...prev,
+      platforms: [
+        ...prev.platforms,
+        {
+          platform: 'whatsapp',
+          webhook: { url: '', enabled: true },
+          phone_number: '',
+          bot_token: '',
+          api_token: ''
+        }
+      ]
+    }));
+  };
+
+  const removePlatform = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      platforms: prev.platforms.filter((_, i) => i !== index)
+    }));
+  };
+
+  const updatePlatform = (index: number, field: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      platforms: prev.platforms.map((platform, i) => 
+        i === index ? { ...platform, [field]: value } : platform
+      )
+    }));
+  };
+
+  const updatePlatformWebhook = (index: number, webhookField: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      platforms: prev.platforms.map((platform, i) => 
+        i === index 
+          ? { 
+              ...platform, 
+              webhook: { 
+                ...platform.webhook, 
+                [webhookField]: value 
+              } 
+            } 
+          : platform
+      )
     }));
   };
 
@@ -169,7 +239,163 @@ export const Chatbots: React.FC = () => {
           className="glass border-white/20 h-24"
         />
       </div>
+
+      {/* Platform Configuration */}
+      <div className="border-t border-white/10 pt-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold flex items-center gap-2">
+            <Smartphone className="w-4 h-4" />
+            Deployment Platforms
+          </h3>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={addPlatform}
+            className="glass border-white/20"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Add Platform
+          </Button>
+        </div>
+
+        <div className="space-y-4">
+          {formData.platforms.map((platform, index) => (
+            <Card key={index} className="glass border-white/20">
+              <CardContent className="p-4 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Smartphone className="w-4 h-4" />
+                    <span className="font-medium">Platform {index + 1}</span>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => removePlatform(index)}
+                    className="glass border-white/20 hover:border-red-500"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>Platform Type</Label>
+                    <Select
+                      value={platform.platform}
+                      onValueChange={(value) => updatePlatform(index, 'platform', value)}
+                    >
+                      <SelectTrigger className="glass border-white/20">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="glass border-white/20 bg-black/90 z-50">
+                        {platformOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label>Webhook URL</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        value={platform.webhook?.url || ''}
+                        onChange={(e) => updatePlatformWebhook(index, 'url', e.target.value)}
+                        placeholder="https://your-domain.com/webhook"
+                        className="glass border-white/20 flex-1"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => updatePlatformWebhook(index, 'enabled', !platform.webhook?.enabled)}
+                        className={`glass border-white/20 ${platform.webhook?.enabled ? 'bg-green-500/20' : ''}`}
+                      >
+                        <Link className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Platform-specific fields */}
+                <div className="grid grid-cols-2 gap-4">
+                  {platformOptions.find(p => p.value === platform.platform)?.fields.includes('phone_number') && (
+                    <div>
+                      <Label>Phone Number</Label>
+                      <Input
+                        value={platform.phone_number || ''}
+                        onChange={(e) => updatePlatform(index, 'phone_number', e.target.value)}
+                        placeholder="+1234567890"
+                        className="glass border-white/20"
+                      />
+                    </div>
+                  )}
+
+                  {platformOptions.find(p => p.value === platform.platform)?.fields.includes('bot_token') && (
+                    <div>
+                      <Label>Bot Token</Label>
+                      <Input
+                        value={platform.bot_token || ''}
+                        onChange={(e) => updatePlatform(index, 'bot_token', e.target.value)}
+                        placeholder="Enter bot token"
+                        className="glass border-white/20"
+                        type="password"
+                      />
+                    </div>
+                  )}
+
+                  {platformOptions.find(p => p.value === platform.platform)?.fields.includes('api_token') && (
+                    <div>
+                      <Label>API Token</Label>
+                      <Input
+                        value={platform.api_token || ''}
+                        onChange={(e) => updatePlatform(index, 'api_token', e.target.value)}
+                        placeholder="Enter API token"
+                        className="glass border-white/20"
+                        type="password"
+                      />
+                    </div>
+                  )}
+
+                  {platform.webhook?.url && (
+                    <div>
+                      <Label>Webhook Secret (Optional)</Label>
+                      <Input
+                        value={platform.webhook?.secret || ''}
+                        onChange={(e) => updatePlatformWebhook(index, 'secret', e.target.value)}
+                        placeholder="Enter webhook secret"
+                        className="glass border-white/20"
+                        type="password"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    checked={platform.webhook?.enabled || false}
+                    onCheckedChange={(checked) => updatePlatformWebhook(index, 'enabled', checked)}
+                  />
+                  <Label className="text-sm">Enable webhook for this platform</Label>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {formData.platforms.length === 0 && (
+          <div className="text-center py-8 text-muted-foreground">
+            <Globe className="w-12 h-12 mx-auto mb-4 opacity-50" />
+            <p>No platforms configured yet. Add a platform to deploy your chatbot.</p>
+          </div>
+        )}
+      </div>
       
+      {/* Database Integration - keep existing code */}
       <div className="border-t border-white/10 pt-6">
         <h3 className="font-semibold mb-4 flex items-center gap-2">
           <Database className="w-4 h-4" />
@@ -245,7 +471,14 @@ export const Chatbots: React.FC = () => {
       <div className="flex justify-end gap-4">
         <Button 
           variant="outline" 
-          onClick={() => isEdit ? setIsSettingsOpen(false) : setIsCreateOpen(false)}
+          onClick={() => {
+            if (isEdit) {
+              setIsSettingsOpen(false);
+            } else {
+              setIsCreateOpen(false);
+            }
+            resetForm();
+          }}
         >
           Cancel
         </Button>
@@ -261,7 +494,7 @@ export const Chatbots: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
+      {/* Header - keep existing code */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -283,7 +516,7 @@ export const Chatbots: React.FC = () => {
               Create Chatbot
             </Button>
           </DialogTrigger>
-          <DialogContent className="glass-strong border-white/20 max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="glass-strong border-white/20 max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="neon-text">Create New Chatbot</DialogTitle>
             </DialogHeader>
@@ -294,7 +527,7 @@ export const Chatbots: React.FC = () => {
 
       {/* Settings Dialog */}
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-        <DialogContent className="glass-strong border-white/20 max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="glass-strong border-white/20 max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="neon-text">Edit Chatbot Settings</DialogTitle>
           </DialogHeader>
@@ -302,7 +535,7 @@ export const Chatbots: React.FC = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Chatbots Grid */}
+      {/* Chatbots Grid - keep existing code but update platform display */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {chatbots.map((bot, index) => (
           <motion.div
@@ -350,12 +583,32 @@ export const Chatbots: React.FC = () => {
                   )}
                 </div>
                 
-                {/* Chatbot Overview */}
+                {/* Platform Display */}
+                <div className="space-y-2 bg-white/5 p-3 rounded-lg">
+                  <h4 className="text-sm font-medium">Deployed Platforms:</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {bot.platforms && bot.platforms.length > 0 ? (
+                      bot.platforms.map((platform, idx) => (
+                        <div key={idx} className="flex items-center gap-1 px-2 py-1 bg-neon-purple/20 text-neon-purple rounded text-xs">
+                          <Smartphone className="w-3 h-3" />
+                          {platformOptions.find(p => p.value === platform.platform)?.label || platform.platform}
+                          {platform.webhook?.enabled && (
+                            <Link className="w-3 h-3 ml-1" />
+                          )}
+                        </div>
+                      ))
+                    ) : (
+                      <span className="text-xs text-muted-foreground">No platforms configured</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Bot Overview - keep existing code */}
                 <div className="space-y-2 bg-white/5 p-3 rounded-lg">
                   <h4 className="text-sm font-medium">Overview:</h4>
                   <div className="text-xs space-y-1">
                     <div><strong>Model:</strong> {bot.model.toUpperCase()}</div>
-                    <div><strong>Platform:</strong> {bot.platform}</div>
+                    <div><strong>Greeting:</strong> {bot.greeting}</div>
                     {bot.database_config && (
                       <>
                         <div><strong>Database:</strong> {databases.find(db => db.id === bot.database_config?.connection_id)?.name || 'Connected'}</div>
@@ -380,13 +633,8 @@ export const Chatbots: React.FC = () => {
                   </div>
                 </div>
                 
-                <div className="space-y-2">
-                  <div className="text-sm">
-                    <strong>Greeting:</strong> {bot.greeting}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    Created {new Date(bot.created_at).toLocaleDateString()}
-                  </div>
+                <div className="text-xs text-muted-foreground">
+                  Created {new Date(bot.created_at).toLocaleDateString()}
                 </div>
                 
                 <div className="flex gap-2">
@@ -430,7 +678,7 @@ export const Chatbots: React.FC = () => {
           </motion.div>
         ))}
         
-        {/* Create New Card */}
+        {/* Create New Card - keep existing code */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -453,7 +701,7 @@ export const Chatbots: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Stats Overview */}
+      {/* Stats Overview - keep existing code */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="glass-strong border-white/10">
           <CardContent className="p-6">

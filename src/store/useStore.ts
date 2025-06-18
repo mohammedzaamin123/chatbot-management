@@ -52,11 +52,25 @@ interface Tenant {
   created_at: string;
 }
 
+interface WebhookConfig {
+  url: string;
+  secret?: string;
+  enabled: boolean;
+}
+
+interface PlatformConfig {
+  platform: 'whatsapp' | 'telegram' | 'instagram' | 'facebook' | 'discord' | 'slack' | 'website';
+  webhook?: WebhookConfig;
+  api_token?: string;
+  phone_number?: string;
+  bot_token?: string;
+}
+
 interface Chatbot {
   id: string;
   name: string;
   status: 'active' | 'inactive' | 'training';
-  platform: string;
+  platforms: PlatformConfig[];
   model: 'gpt-4o' | 'claude' | 'gemini';
   conversations: number;
   system_prompt: string;
@@ -352,7 +366,16 @@ export const useStore = create<Store>((set) => ({
           id: '1',
           name: 'Customer Support Bot',
           status: 'active',
-          platform: 'WhatsApp',
+          platforms: [
+            {
+              platform: 'whatsapp',
+              webhook: {
+                url: 'https://api.example.com/webhook/whatsapp',
+                enabled: true
+              },
+              phone_number: '+1234567890'
+            }
+          ],
           model: 'gpt-4o',
           conversations: 1247,
           system_prompt: 'You are a helpful customer support assistant.',
@@ -363,7 +386,16 @@ export const useStore = create<Store>((set) => ({
           id: '2',
           name: 'Sales Assistant',
           status: 'active',
-          platform: 'Instagram',
+          platforms: [
+            {
+              platform: 'telegram',
+              webhook: {
+                url: 'https://api.example.com/webhook/telegram',
+                enabled: true
+              },
+              bot_token: '123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11'
+            }
+          ],
           model: 'claude',
           conversations: 856,
           system_prompt: 'You are a sales assistant helping customers with purchases.',
