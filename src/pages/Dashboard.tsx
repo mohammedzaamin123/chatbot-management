@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -8,14 +9,14 @@ import {
   Bot,
   Target,
   Sparkles,
-  Database as DatabaseIcon,
+  Database,
   ArrowUp,
   ArrowDown
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { useAppSelector } from '../store/hooks';
+import { useStore } from '../store/useStore';
 
 const chartData = [
   { name: 'Mon', messages: 420, posts: 12, response: 1.2 },
@@ -35,10 +36,7 @@ const pieData = [
 ];
 
 export const Dashboard: React.FC = () => {
-  const { analytics } = useAppSelector((state) => state.analytics);
-  const { chatbots } = useAppSelector((state) => state.chatbot);
-  const { campaigns } = useAppSelector((state) => state.campaign);
-  const { currentTenant } = useAppSelector((state) => state.tenant);
+  const { analytics, chatbots, campaigns, currentTenant } = useStore();
 
   const quickActions = [
     { 
@@ -330,7 +328,7 @@ export const Dashboard: React.FC = () => {
         <Card className="glass-strong border-white/10">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 font-jakarta">
-              <DatabaseIcon className="w-5 h-5" />
+              <Database className="w-5 h-5" />
               System Status
             </CardTitle>
           </CardHeader>
