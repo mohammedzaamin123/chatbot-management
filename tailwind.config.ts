@@ -68,9 +68,46 @@ export default {
 						800: '#2A2A2A',
 						900: '#1D1D1F'
 					}
+				},
+				// Pastel colors for metrics
+				pastel: {
+					purple: {
+						50: '#F3F1FF',
+						100: '#E9E5FF',
+						200: '#D6CCFF',
+						300: '#B8A7FF',
+						400: '#9678FF',
+						500: '#7C3AED'
+					},
+					green: {
+						50: '#F0FDF4',
+						100: '#DCFCE7',
+						200: '#BBF7D0',
+						300: '#86EFAC',
+						400: '#4ADE80',
+						500: '#22C55E'
+					},
+					blue: {
+						50: '#EFF6FF',
+						100: '#DBEAFE',
+						200: '#BFDBFE',
+						300: '#93C5FD',
+						400: '#60A5FA',
+						500: '#3B82F6'
+					},
+					pink: {
+						50: '#FDF2F8',
+						100: '#FCE7F3',
+						200: '#FBCFE8',
+						300: '#F9A8D4',
+						400: '#F472B6',
+						500: '#EC4899'
+					}
 				}
 			},
 			fontFamily: {
+				'inter': ['Inter', 'system-ui', 'sans-serif'],
+				'jakarta': ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
 				'sf-pro': ['SF Pro Display', 'system-ui', 'sans-serif'],
 				'sf-text': ['SF Pro Text', 'system-ui', 'sans-serif']
 			},
