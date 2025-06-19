@@ -13,63 +13,27 @@ import {
   ArrowUp,
   ArrowDown
 } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area, RadialBarChart, RadialBar, Legend } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { useStore } from '../store/useStore';
 
 const chartData = [
-  { name: 'Mon', messages: 420, posts: 12, response: 1.2, engagement: 85 },
-  { name: 'Tue', messages: 680, posts: 18, response: 0.9, engagement: 92 },
-  { name: 'Wed', messages: 890, posts: 24, response: 1.1, engagement: 78 },
-  { name: 'Thu', messages: 560, posts: 15, response: 1.3, engagement: 88 },
-  { name: 'Fri', messages: 1240, posts: 32, response: 0.8, engagement: 95 },
-  { name: 'Sat', messages: 980, posts: 28, response: 1.0, engagement: 90 },
-  { name: 'Sun', messages: 760, posts: 21, response: 1.1, engagement: 87 }
+  { name: 'Mon', messages: 420, posts: 12, response: 1.2 },
+  { name: 'Tue', messages: 680, posts: 18, response: 0.9 },
+  { name: 'Wed', messages: 890, posts: 24, response: 1.1 },
+  { name: 'Thu', messages: 560, posts: 15, response: 1.3 },
+  { name: 'Fri', messages: 1240, posts: 32, response: 0.8 },
+  { name: 'Sat', messages: 980, posts: 28, response: 1.0 },
+  { name: 'Sun', messages: 760, posts: 21, response: 1.1 }
 ];
 
 const pieData = [
-  { name: 'WhatsApp', value: 35, color: '#A78BFA', lightColor: '#C4B5FD' },
-  { name: 'Instagram', value: 25, color: '#FB7185', lightColor: '#FDA4AF' },
-  { name: 'Facebook', value: 20, color: '#60A5FA', lightColor: '#93C5FD' },
-  { name: 'Telegram', value: 20, color: '#34D399', lightColor: '#6EE7B7' }
+  { name: 'WhatsApp', value: 35, color: '#10B981' },
+  { name: 'Instagram', value: 25, color: '#EC4899' },
+  { name: 'Facebook', value: 20, color: '#3B82F6' },
+  { name: 'Telegram', value: 20, color: '#8B5CF6' }
 ];
-
-const performanceData = [
-  { name: 'Response Rate', value: 92, color: '#A78BFA' },
-  { name: 'Engagement', value: 78, color: '#FB7185' },
-  { name: 'Conversion', value: 65, color: '#60A5FA' },
-  { name: 'Satisfaction', value: 88, color: '#34D399' }
-];
-
-const CustomTooltip = ({ active, payload, label }: any) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="glass-strong rounded-xl p-4 border border-white/20 shadow-2xl">
-        <p className="font-medium text-foreground mb-2 font-jakarta">{label}</p>
-        {payload.map((entry: any, index: number) => (
-          <p key={index} className="text-sm font-inter" style={{ color: entry.color }}>
-            {entry.name}: {entry.value.toLocaleString()}
-          </p>
-        ))}
-      </div>
-    );
-  }
-  return null;
-};
-
-const CustomPieTooltip = ({ active, payload }: any) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="glass-strong rounded-xl p-3 border border-white/20 shadow-2xl">
-        <p className="text-sm font-medium font-inter" style={{ color: payload[0].payload.color }}>
-          {payload[0].name}: {payload[0].value}%
-        </p>
-      </div>
-    );
-  }
-  return null;
-};
 
 export const Dashboard: React.FC = () => {
   const { analytics, chatbots, campaigns, currentTenant } = useStore();
@@ -79,28 +43,28 @@ export const Dashboard: React.FC = () => {
       icon: Bot, 
       label: 'Create Chatbot', 
       description: 'Build new AI assistant',
-      color: 'from-purple-400 to-pink-400',
+      color: 'from-purple-500 to-pink-500',
       path: '/chatbots'
     },
     { 
       icon: Sparkles, 
       label: 'Generate Content', 
       description: 'AI-powered content creation',
-      color: 'from-yellow-400 to-orange-400',
+      color: 'from-yellow-500 to-orange-500',
       path: '/content'
     },
     { 
       icon: Calendar, 
       label: 'Schedule Post', 
       description: 'Plan your social media',
-      color: 'from-green-400 to-cyan-400',
+      color: 'from-green-500 to-cyan-500',
       path: '/scheduler'
     },
     { 
       icon: Target, 
       label: 'Launch Campaign', 
       description: 'Create marketing campaign',
-      color: 'from-blue-400 to-purple-400',
+      color: 'from-blue-500 to-purple-500',
       path: '/campaigns'
     }
   ];
@@ -204,11 +168,11 @@ export const Dashboard: React.FC = () => {
         ))}
       </div>
 
-      {/* Enhanced Charts Section */}
+      {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Enhanced Area Chart */}
-        <Card className="glass-strong border-white/10 rounded-2xl overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-purple-50/50 to-pink-50/50 dark:from-purple-950/20 dark:to-pink-950/20">
+        {/* Activity Chart */}
+        <Card className="glass-strong border-white/10">
+          <CardHeader>
             <CardTitle className="flex items-center justify-between font-jakarta">
               <span>Activity Overview</span>
               <div className="flex gap-2">
@@ -218,169 +182,62 @@ export const Dashboard: React.FC = () => {
               </div>
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-6">
-            <ResponsiveContainer width="100%" height={320}>
-              <AreaChart data={chartData}>
-                <defs>
-                  <linearGradient id="messagesGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#A78BFA" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#A78BFA" stopOpacity={0.1}/>
-                  </linearGradient>
-                  <linearGradient id="postsGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#34D399" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#34D399" stopOpacity={0.1}/>
-                  </linearGradient>
-                </defs>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                <XAxis 
-                  dataKey="name" 
-                  stroke="rgba(255,255,255,0.7)" 
-                  fontSize={12}
-                  fontFamily="Inter"
+                <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
+                <YAxis stroke="rgba(255,255,255,0.5)" />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'rgba(0,0,0,0.8)', 
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    borderRadius: '8px',
+                    fontFamily: 'Inter'
+                  }} 
                 />
-                <YAxis 
-                  stroke="rgba(255,255,255,0.7)" 
-                  fontSize={12}
-                  fontFamily="Inter"
-                />
-                <Tooltip content={<CustomTooltip />} />
-                <Area 
+                <Line 
                   type="monotone" 
                   dataKey="messages" 
-                  stroke="#A78BFA" 
+                  stroke="#8B5CF6" 
                   strokeWidth={3}
-                  fill="url(#messagesGradient)"
-                  dot={{ fill: '#A78BFA', strokeWidth: 2, r: 5 }}
-                  activeDot={{ r: 7, stroke: '#A78BFA', strokeWidth: 2 }}
+                  dot={{ fill: '#8B5CF6', strokeWidth: 2, r: 4 }}
                 />
-                <Area 
+                <Line 
                   type="monotone" 
                   dataKey="posts" 
-                  stroke="#34D399" 
+                  stroke="#10B981" 
                   strokeWidth={3}
-                  fill="url(#postsGradient)"
-                  dot={{ fill: '#34D399', strokeWidth: 2, r: 5 }}
-                  activeDot={{ r: 7, stroke: '#34D399', strokeWidth: 2 }}
+                  dot={{ fill: '#10B981', strokeWidth: 2, r: 4 }}
                 />
-              </AreaChart>
+              </LineChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        {/* Enhanced Pie Chart */}
-        <Card className="glass-strong border-white/10 rounded-2xl overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-blue-50/50 to-cyan-50/50 dark:from-blue-950/20 dark:to-cyan-950/20">
-            <CardTitle className="font-jakarta">Platform Distribution</CardTitle>
+        {/* Platform Distribution */}
+        <Card className="glass-strong border-white/10">
+          <CardHeader>
+            <CardTitle className="font-jakarta">Message Distribution</CardTitle>
           </CardHeader>
-          <CardContent className="p-6">
-            <ResponsiveContainer width="100%" height={320}>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
                   data={pieData}
                   cx="50%"
                   cy="50%"
-                  outerRadius={90}
-                  innerRadius={40}
+                  outerRadius={100}
                   fill="#8884d8"
                   dataKey="value"
-                  stroke="rgba(255,255,255,0.2)"
-                  strokeWidth={2}
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                 >
                   {pieData.map((entry, index) => (
-                    <Cell 
-                      key={`cell-${index}`} 
-                      fill={entry.color}
-                      style={{
-                        filter: `drop-shadow(0 4px 8px ${entry.color}40)`,
-                      }}
-                    />
+                    <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip content={<CustomPieTooltip />} />
-                <Legend 
-                  verticalAlign="bottom" 
-                  height={36}
-                  formatter={(value, entry) => (
-                    <span style={{ color: entry.color, fontFamily: 'Inter', fontSize: '12px' }}>
-                      {value}
-                    </span>
-                  )}
-                />
+                <Tooltip />
               </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* New Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Performance Radial Chart */}
-        <Card className="glass-strong border-white/10 rounded-2xl overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-green-50/50 to-emerald-50/50 dark:from-green-950/20 dark:to-emerald-950/20">
-            <CardTitle className="font-jakarta">Performance Metrics</CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <ResponsiveContainer width="100%" height={320}>
-              <RadialBarChart cx="50%" cy="50%" innerRadius="20%" outerRadius="90%" data={performanceData}>
-                <RadialBar 
-                  dataKey="value" 
-                  cornerRadius={10} 
-                  fill="#A78BFA"
-                  stroke="rgba(255,255,255,0.2)"
-                  strokeWidth={1}
-                />
-                <Legend 
-                  iconSize={10}
-                  layout="vertical"
-                  verticalAlign="middle"
-                  align="right"
-                  formatter={(value, entry) => (
-                    <span style={{ color: entry.color, fontFamily: 'Inter', fontSize: '12px' }}>
-                      {value}: {entry.payload.value}%
-                    </span>
-                  )}
-                />
-                <Tooltip content={<CustomTooltip />} />
-              </RadialBarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Enhanced Bar Chart */}
-        <Card className="glass-strong border-white/10 rounded-2xl overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-orange-50/50 to-red-50/50 dark:from-orange-950/20 dark:to-red-950/20">
-            <CardTitle className="font-jakarta">Weekly Engagement</CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <ResponsiveContainer width="100%" height={320}>
-              <BarChart data={chartData}>
-                <defs>
-                  <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#FB7185" stopOpacity={0.9}/>
-                    <stop offset="95%" stopColor="#FDA4AF" stopOpacity={0.6}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                <XAxis 
-                  dataKey="name" 
-                  stroke="rgba(255,255,255,0.7)" 
-                  fontSize={12}
-                  fontFamily="Inter"
-                />
-                <YAxis 
-                  stroke="rgba(255,255,255,0.7)" 
-                  fontSize={12}
-                  fontFamily="Inter"
-                />
-                <Tooltip content={<CustomTooltip />} />
-                <Bar 
-                  dataKey="engagement" 
-                  fill="url(#barGradient)"
-                  radius={[4, 4, 0, 0]}
-                  stroke="rgba(255,255,255,0.2)"
-                  strokeWidth={1}
-                />
-              </BarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
@@ -415,6 +272,7 @@ export const Dashboard: React.FC = () => {
 
       {/* Recent Activity & Stats */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Active Chatbots */}
         <Card className="glass-strong border-white/10">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 font-jakarta">
@@ -440,6 +298,7 @@ export const Dashboard: React.FC = () => {
           </CardContent>
         </Card>
 
+        {/* Recent Campaigns */}
         <Card className="glass-strong border-white/10">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 font-jakarta">
@@ -465,6 +324,7 @@ export const Dashboard: React.FC = () => {
           </CardContent>
         </Card>
 
+        {/* System Status */}
         <Card className="glass-strong border-white/10">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 font-jakarta">
