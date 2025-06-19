@@ -65,18 +65,21 @@
     transition: all 0.3s ease;
   }
 
-  /* Light mode background (default) */
+  /* Enhanced gradient backgrounds */
   body {
     background: 
-      radial-gradient(ellipse at top, rgba(139, 92, 246, 0.03) 0%, transparent 50%),
-      #FAFAFA;
+      radial-gradient(ellipse at top left, rgba(167, 139, 250, 0.08) 0%, transparent 40%),
+      radial-gradient(ellipse at bottom right, rgba(244, 114, 182, 0.06) 0%, transparent 40%),
+      radial-gradient(ellipse at center, rgba(34, 211, 238, 0.04) 0%, transparent 50%),
+      linear-gradient(135deg, #FAFAFA 0%, #F8FAFC 100%);
   }
 
-  /* Dark mode background */
   .dark body {
     background: 
-      radial-gradient(ellipse at top, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
-      #0A0A0A;
+      radial-gradient(ellipse at top left, rgba(167, 139, 250, 0.15) 0%, transparent 40%),
+      radial-gradient(ellipse at bottom right, rgba(244, 114, 182, 0.1) 0%, transparent 40%),
+      radial-gradient(ellipse at center, rgba(34, 211, 238, 0.08) 0%, transparent 50%),
+      linear-gradient(135deg, #0A0A0A 0%, #111111 100%);
   }
 
   /* Headings use Plus Jakarta Sans */
@@ -127,172 +130,344 @@
     scrollbar-width: none;
   }
 
-  /* Glass effects - Fixed for light mode */
+  /* Enhanced Glass effects */
   .glass {
     backdrop-filter: blur(20px) saturate(180%);
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
   }
 
   .dark .glass {
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.5);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
 
   .glass-strong {
-    backdrop-filter: blur(20px) saturate(180%);
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(25px) saturate(200%);
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 12px 40px rgba(31, 38, 135, 0.2);
   }
 
   .dark .glass-strong {
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.7);
     border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
   }
 }
 
-/* Apple-style component classes - Fixed for light mode */
+/* Enhanced pastel metric card variants with gradients and animations */
 .metric-card {
-  @apply backdrop-blur-xl rounded-2xl p-6 transition-all duration-200 hover:scale-[1.02];
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  @apply backdrop-blur-xl rounded-2xl p-6 transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+  pointer-events: none;
 }
 
 .dark .metric-card {
   background: rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
-/* Pastel metric card variants */
+/* Pastel gradient cards */
 .metric-card-purple {
-  background: linear-gradient(135deg, rgba(167, 139, 250, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
-  border: 1px solid rgba(167, 139, 250, 0.2);
+  background: linear-gradient(135deg, 
+    rgba(196, 181, 253, 0.3) 0%, 
+    rgba(167, 139, 250, 0.2) 50%, 
+    rgba(139, 92, 246, 0.1) 100%);
+  border: 1px solid rgba(196, 181, 253, 0.4);
+  box-shadow: 0 12px 40px rgba(139, 92, 246, 0.15);
 }
 
 .metric-card-green {
-  background: linear-gradient(135deg, rgba(52, 211, 153, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
-  border: 1px solid rgba(52, 211, 153, 0.2);
+  background: linear-gradient(135deg, 
+    rgba(134, 239, 172, 0.3) 0%, 
+    rgba(74, 222, 128, 0.2) 50%, 
+    rgba(34, 197, 94, 0.1) 100%);
+  border: 1px solid rgba(134, 239, 172, 0.4);
+  box-shadow: 0 12px 40px rgba(34, 197, 94, 0.15);
 }
 
 .metric-card-blue {
-  background: linear-gradient(135deg, rgba(96, 165, 250, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
-  border: 1px solid rgba(96, 165, 250, 0.2);
+  background: linear-gradient(135deg, 
+    rgba(147, 197, 253, 0.3) 0%, 
+    rgba(96, 165, 250, 0.2) 50%, 
+    rgba(59, 130, 246, 0.1) 100%);
+  border: 1px solid rgba(147, 197, 253, 0.4);
+  box-shadow: 0 12px 40px rgba(59, 130, 246, 0.15);
 }
 
 .metric-card-pink {
-  background: linear-gradient(135deg, rgba(244, 114, 182, 0.1) 0%, rgba(236, 72, 153, 0.05) 100%);
-  border: 1px solid rgba(244, 114, 182, 0.2);
+  background: linear-gradient(135deg, 
+    rgba(249, 168, 212, 0.3) 0%, 
+    rgba(244, 114, 182, 0.2) 50%, 
+    rgba(236, 72, 153, 0.1) 100%);
+  border: 1px solid rgba(249, 168, 212, 0.4);
+  box-shadow: 0 12px 40px rgba(236, 72, 153, 0.15);
 }
 
 .metric-card-orange {
-  background: linear-gradient(135deg, rgba(251, 146, 60, 0.1) 0%, rgba(249, 115, 22, 0.05) 100%);
-  border: 1px solid rgba(251, 146, 60, 0.2);
+  background: linear-gradient(135deg, 
+    rgba(253, 186, 116, 0.3) 0%, 
+    rgba(251, 146, 60, 0.2) 50%, 
+    rgba(249, 115, 22, 0.1) 100%);
+  border: 1px solid rgba(253, 186, 116, 0.4);
+  box-shadow: 0 12px 40px rgba(249, 115, 22, 0.15);
 }
 
 .metric-card-cyan {
-  background: linear-gradient(135deg, rgba(34, 211, 238, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%);
-  border: 1px solid rgba(34, 211, 238, 0.2);
+  background: linear-gradient(135deg, 
+    rgba(103, 232, 249, 0.3) 0%, 
+    rgba(34, 211, 238, 0.2) 50%, 
+    rgba(6, 182, 212, 0.1) 100%);
+  border: 1px solid rgba(103, 232, 249, 0.4);
+  box-shadow: 0 12px 40px rgba(6, 182, 212, 0.15);
 }
 
+.metric-card-violet {
+  background: linear-gradient(135deg, 
+    rgba(196, 181, 253, 0.3) 0%, 
+    rgba(139, 92, 246, 0.2) 50%, 
+    rgba(124, 58, 237, 0.1) 100%);
+  border: 1px solid rgba(196, 181, 253, 0.4);
+  box-shadow: 0 12px 40px rgba(124, 58, 237, 0.15);
+}
+
+.metric-card-emerald {
+  background: linear-gradient(135deg, 
+    rgba(110, 231, 183, 0.3) 0%, 
+    rgba(52, 211, 153, 0.2) 50%, 
+    rgba(16, 185, 129, 0.1) 100%);
+  border: 1px solid rgba(110, 231, 183, 0.4);
+  box-shadow: 0 12px 40px rgba(16, 185, 129, 0.15);
+}
+
+.metric-card-rose {
+  background: linear-gradient(135deg, 
+    rgba(253, 164, 175, 0.3) 0%, 
+    rgba(251, 113, 133, 0.2) 50%, 
+    rgba(244, 63, 94, 0.1) 100%);
+  border: 1px solid rgba(253, 164, 175, 0.4);
+  box-shadow: 0 12px 40px rgba(244, 63, 94, 0.15);
+}
+
+.metric-card-indigo {
+  background: linear-gradient(135deg, 
+    rgba(165, 180, 252, 0.3) 0%, 
+    rgba(129, 140, 248, 0.2) 50%, 
+    rgba(99, 102, 241, 0.1) 100%);
+  border: 1px solid rgba(165, 180, 252, 0.4);
+  box-shadow: 0 12px 40px rgba(99, 102, 241, 0.15);
+}
+
+/* Dark mode variants */
 .dark .metric-card-purple {
-  background: linear-gradient(135deg, rgba(167, 139, 250, 0.15) 0%, rgba(139, 92, 246, 0.08) 100%);
+  background: linear-gradient(135deg, 
+    rgba(167, 139, 250, 0.2) 0%, 
+    rgba(139, 92, 246, 0.15) 50%, 
+    rgba(124, 58, 237, 0.1) 100%);
   border: 1px solid rgba(167, 139, 250, 0.3);
 }
 
 .dark .metric-card-green {
-  background: linear-gradient(135deg, rgba(52, 211, 153, 0.15) 0%, rgba(16, 185, 129, 0.08) 100%);
-  border: 1px solid rgba(52, 211, 153, 0.3);
+  background: linear-gradient(135deg, 
+    rgba(74, 222, 128, 0.2) 0%, 
+    rgba(34, 197, 94, 0.15) 50%, 
+    rgba(22, 163, 74, 0.1) 100%);
+  border: 1px solid rgba(74, 222, 128, 0.3);
 }
 
 .dark .metric-card-blue {
-  background: linear-gradient(135deg, rgba(96, 165, 250, 0.15) 0%, rgba(59, 130, 246, 0.08) 100%);
+  background: linear-gradient(135deg, 
+    rgba(96, 165, 250, 0.2) 0%, 
+    rgba(59, 130, 246, 0.15) 50%, 
+    rgba(37, 99, 235, 0.1) 100%);
   border: 1px solid rgba(96, 165, 250, 0.3);
 }
 
 .dark .metric-card-pink {
-  background: linear-gradient(135deg, rgba(244, 114, 182, 0.15) 0%, rgba(236, 72, 153, 0.08) 100%);
+  background: linear-gradient(135deg, 
+    rgba(244, 114, 182, 0.2) 0%, 
+    rgba(236, 72, 153, 0.15) 50%, 
+    rgba(219, 39, 119, 0.1) 100%);
   border: 1px solid rgba(244, 114, 182, 0.3);
 }
 
 .dark .metric-card-orange {
-  background: linear-gradient(135deg, rgba(251, 146, 60, 0.15) 0%, rgba(249, 115, 22, 0.08) 100%);
+  background: linear-gradient(135deg, 
+    rgba(251, 146, 60, 0.2) 0%, 
+    rgba(249, 115, 22, 0.15) 50%, 
+    rgba(234, 88, 12, 0.1) 100%);
   border: 1px solid rgba(251, 146, 60, 0.3);
 }
 
 .dark .metric-card-cyan {
-  background: linear-gradient(135deg, rgba(34, 211, 238, 0.15) 0%, rgba(6, 182, 212, 0.08) 100%);
+  background: linear-gradient(135deg, 
+    rgba(34, 211, 238, 0.2) 0%, 
+    rgba(6, 182, 212, 0.15) 50%, 
+    rgba(8, 145, 178, 0.1) 100%);
   border: 1px solid rgba(34, 211, 238, 0.3);
 }
 
+.dark .metric-card-violet {
+  background: linear-gradient(135deg, 
+    rgba(139, 92, 246, 0.2) 0%, 
+    rgba(124, 58, 237, 0.15) 50%, 
+    rgba(109, 40, 217, 0.1) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.dark .metric-card-emerald {
+  background: linear-gradient(135deg, 
+    rgba(52, 211, 153, 0.2) 0%, 
+    rgba(16, 185, 129, 0.15) 50%, 
+    rgba(5, 150, 105, 0.1) 100%);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+.dark .metric-card-rose {
+  background: linear-gradient(135deg, 
+    rgba(251, 113, 133, 0.2) 0%, 
+    rgba(244, 63, 94, 0.15) 50%, 
+    rgba(225, 29, 72, 0.1) 100%);
+  border: 1px solid rgba(251, 113, 133, 0.3);
+}
+
+.dark .metric-card-indigo {
+  background: linear-gradient(135deg, 
+    rgba(129, 140, 248, 0.2) 0%, 
+    rgba(99, 102, 241, 0.15) 50%, 
+    rgba(79, 70, 229, 0.1) 100%);
+  border: 1px solid rgba(129, 140, 248, 0.3);
+}
+
+/* Enhanced navigation and buttons */
 .nav-item {
-  @apply relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200;
+  @apply relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 .nav-item:hover {
   @apply transform scale-[1.02];
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .dark .nav-item:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .nav-item.active {
   @apply text-white;
-  background: #007AFF;
-  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
 }
 
 .btn-primary {
-  @apply text-white font-medium px-6 py-3 rounded-xl transition-all duration-200 hover:scale-[1.02];
-  background: #007AFF;
-  box-shadow: 0 1px 3px rgba(0, 122, 255, 0.3);
+  @apply text-white font-medium px-6 py-3 rounded-xl transition-all duration-300 hover:scale-[1.05];
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
 
 .btn-primary:hover {
-  background: #0051D5;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
 }
 
 .btn-secondary {
-  @apply font-medium px-6 py-3 rounded-xl hover:scale-[1.02] transition-all duration-200;
-  background: rgba(0, 0, 0, 0.08);
-  color: #1D1D1F;
+  @apply font-medium px-6 py-3 rounded-xl hover:scale-[1.02] transition-all duration-300;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .dark .btn-secondary {
   background: rgba(255, 255, 255, 0.1);
-  color: #F5F5F7;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* Status badges - Fixed for light mode */
+/* Enhanced status badges */
 .status-active {
-  @apply bg-green-50 text-green-700 border border-green-200 rounded-full px-3 py-1 text-xs font-medium;
+  @apply rounded-full px-3 py-1 text-xs font-medium;
+  background: linear-gradient(135deg, rgba(52, 211, 153, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%);
+  color: #059669;
+  border: 1px solid rgba(52, 211, 153, 0.3);
 }
 
 .status-inactive {
-  @apply bg-red-50 text-red-700 border border-red-200 rounded-full px-3 py-1 text-xs font-medium;
+  @apply rounded-full px-3 py-1 text-xs font-medium;
+  background: linear-gradient(135deg, rgba(248, 113, 113, 0.2) 0%, rgba(239, 68, 68, 0.1) 100%);
+  color: #DC2626;
+  border: 1px solid rgba(248, 113, 113, 0.3);
 }
 
 .status-pending {
-  @apply bg-orange-50 text-orange-700 border border-orange-200 rounded-full px-3 py-1 text-xs font-medium;
+  @apply rounded-full px-3 py-1 text-xs font-medium;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, rgba(245, 158, 11, 0.1) 100%);
+  color: #D97706;
+  border: 1px solid rgba(251, 191, 36, 0.3);
 }
 
 .dark .status-active {
-  @apply bg-green-900/30 text-green-400 border-green-800;
+  background: linear-gradient(135deg, rgba(52, 211, 153, 0.3) 0%, rgba(16, 185, 129, 0.15) 100%);
+  color: #10B981;
 }
 
 .dark .status-inactive {
-  @apply bg-red-900/30 text-red-400 border-red-800;
+  background: linear-gradient(135deg, rgba(248, 113, 113, 0.3) 0%, rgba(239, 68, 68, 0.15) 100%);
+  color: #EF4444;
 }
 
 .dark .status-pending {
-  @apply bg-orange-900/30 text-orange-400 border-orange-800;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.3) 0%, rgba(245, 158, 11, 0.15) 100%);
+  color: #F59E0B;
+}
+
+/* Card hover animations */
+.card-hover {
+  @apply transition-all duration-300 hover:scale-[1.02] hover:shadow-xl;
+}
+
+.card-glow {
+  position: relative;
+}
+
+.card-glow::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #f5576c);
+  border-radius: inherit;
+  z-index: -1;
+  filter: blur(6px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card-glow:hover::before {
+  opacity: 0.7;
 }
 
 /* Smooth transitions */
 * {
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
