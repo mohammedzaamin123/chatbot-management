@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Database as DatabaseIcon, Plus, Settings, Trash2, RefreshCw, Eye, Edit } from 'lucide-react';
@@ -9,12 +8,16 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
-import { useStore, DatabaseConnection } from '../store/useStore';
+import { useAppSelector, useAppDispatch } from '../store/hooks';
+import { addDatabase, updateDatabase, deleteDatabase } from '../store/slices/databaseSlice';
+import { DatabaseConnection } from '../store/types';
 import { toast } from '@/hooks/use-toast';
 import { DatabaseDetailsDialog } from '../components/DatabaseDetailsDialog';
 
 export const Database: React.FC = () => {
-  const { databases, addDatabase, updateDatabase, deleteDatabase } = useStore();
+  const dispatch = useAppDispatch();
+  const { databases } = useAppSelector((state) => state.database);
+  
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [selectedDatabase, setSelectedDatabase] = useState<DatabaseConnection | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -25,13 +28,13 @@ export const Database: React.FC = () => {
   });
 
   const handleCreateDatabase = () => {
-    addDatabase({
+    dispatch(addDatabase({
       name: formData.name,
       type: formData.type as any,
       status: 'connected',
       collections: ['users', 'products'],
       last_sync: new Date().toISOString()
-    });
+    }));
     
     setIsCreateOpen(false);
     setFormData({
@@ -44,6 +47,10 @@ export const Database: React.FC = () => {
   const handleDatabaseClick = (database: DatabaseConnection) => {
     setSelectedDatabase(database);
     setIsDetailsOpen(true);
+  };
+
+  const handleDeleteDatabase = (id: string) => {
+    dispatch(deleteDatabase(id));
   };
 
   const getStatusColor = (status: string) => {
@@ -251,7 +258,7 @@ export const Database: React.FC = () => {
           setIsDetailsOpen(false);
           setSelectedDatabase(null);
         }}
-        onDelete={deleteDatabase}
+        onDelete={handleDeleteDatabase}
       />
     </div>
   );

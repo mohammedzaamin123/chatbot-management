@@ -1,12 +1,14 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { CreditCard, Download, Calendar, DollarSign, TrendingUp } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
+import { useAppSelector } from '../store/hooks';
 
 export const Billing: React.FC = () => {
+  const { currentTenant } = useAppSelector((state) => state.tenant);
+  
   const invoices = [
     { id: 'INV-001', date: '2024-01-15', amount: '$29.99', status: 'paid' },
     { id: 'INV-002', date: '2024-02-15', amount: '$29.99', status: 'paid' },
@@ -43,7 +45,7 @@ export const Billing: React.FC = () => {
             <CardContent className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-2xl font-bold">Pro Plan</h3>
+                  <h3 className="text-2xl font-bold capitalize">{currentTenant?.plan || 'Pro'} Plan</h3>
                   <p className="text-muted-foreground">Perfect for growing businesses</p>
                 </div>
                 <div className="text-right">

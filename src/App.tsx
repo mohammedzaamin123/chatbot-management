@@ -4,6 +4,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Provider } from 'react-redux';
+import { store } from './store/store';
 import { Layout } from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
 import Chatbots from "./pages/Chatbots";
@@ -23,32 +25,34 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/chatbots" element={<Chatbots />} />
-            <Route path="/content" element={<Content />} />
-            <Route path="/scheduler" element={<Scheduler />} />
-            <Route path="/campaigns" element={<Campaigns />} />
-            <Route path="/messages" element={<Messages />} />
-            <Route path="/automation" element={<Automation />} />
-            <Route path="/database" element={<Database />} />
-            <Route path="/tenants" element={<Tenants />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/billing" element={<Billing />} />
-            <Route path="/support" element={<Support />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Layout>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <Provider store={store}>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/chatbots" element={<Chatbots />} />
+              <Route path="/content" element={<Content />} />
+              <Route path="/scheduler" element={<Scheduler />} />
+              <Route path="/campaigns" element={<Campaigns />} />
+              <Route path="/messages" element={<Messages />} />
+              <Route path="/automation" element={<Automation />} />
+              <Route path="/database" element={<Database />} />
+              <Route path="/tenants" element={<Tenants />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/billing" element={<Billing />} />
+              <Route path="/support" element={<Support />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Layout>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </Provider>
 );
 
 export default App;

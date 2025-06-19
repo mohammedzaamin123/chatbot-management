@@ -4,26 +4,23 @@ import { motion } from 'framer-motion';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { FloatingChatbot } from './FloatingChatbot';
-import { useStore } from '../store/useStore';
+import { useAppSelector } from '../store/hooks';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const { sidebarCollapsed, initializeSampleData, theme } = useStore();
+  const { sidebarCollapsed, theme } = useAppSelector((state) => state.ui);
 
   useEffect(() => {
-    // Initialize sample data on first load
-    initializeSampleData();
-    
     // Initialize theme - light theme is default
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
-  }, [initializeSampleData, theme]);
+  }, [theme]);
 
   return (
     <div className="min-h-screen bg-background text-foreground flex transition-all duration-300">

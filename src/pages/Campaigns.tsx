@@ -8,7 +8,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { useStore } from '../store/useStore';
+import { useAppSelector, useAppDispatch } from '../store/hooks';
+import { addCampaign, updateCampaign } from '../store/slices/campaignSlice';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const performanceData = [
@@ -22,7 +23,9 @@ const performanceData = [
 ];
 
 export const Campaigns: React.FC = () => {
-  const { campaigns, addCampaign, updateCampaign } = useStore();
+  const dispatch = useAppDispatch();
+  const { campaigns } = useAppSelector((state) => state.campaign);
+  
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -33,7 +36,7 @@ export const Campaigns: React.FC = () => {
   });
 
   const handleCreateCampaign = () => {
-    addCampaign({
+    dispatch(addCampaign({
       name: formData.name,
       status: 'paused',
       platform: formData.platform as any,
@@ -42,7 +45,7 @@ export const Campaigns: React.FC = () => {
       reach: 0,
       ctr: 0,
       roi: 0
-    });
+    }));
     
     setIsCreateOpen(false);
     setFormData({
@@ -56,7 +59,7 @@ export const Campaigns: React.FC = () => {
 
   const toggleCampaignStatus = (campaignId: string, currentStatus: string) => {
     const newStatus = currentStatus === 'active' ? 'paused' : 'active';
-    updateCampaign(campaignId, { status: newStatus });
+    dispatch(updateCampaign({ id: campaignId, updates: { status: newStatus } }));
   };
 
   return (
