@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   TrendingUp, 
@@ -17,6 +16,9 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { useStore } from '../store/useStore';
+import { AnalyticsPopup } from '../components/popups/AnalyticsPopup';
+import { ExportReportPopup } from '../components/popups/ExportReportPopup';
+import { useNavigate } from 'react-router-dom';
 
 const chartData = [
   { name: 'Mon', messages: 420, posts: 12, response: 1.2 },
@@ -37,6 +39,9 @@ const pieData = [
 
 export const Dashboard: React.FC = () => {
   const { analytics, chatbots, campaigns, currentTenant } = useStore();
+  const navigate = useNavigate();
+  const [analyticsPopupOpen, setAnalyticsPopupOpen] = useState(false);
+  const [exportReportPopupOpen, setExportReportPopupOpen] = useState(false);
 
   const quickActions = [
     { 
@@ -104,6 +109,10 @@ export const Dashboard: React.FC = () => {
     }
   ];
 
+  const handleQuickAction = (path: string) => {
+    navigate(path);
+  };
+
   return (
     <div className="space-y-8 font-inter">
       {/* Header */}
@@ -122,11 +131,18 @@ export const Dashboard: React.FC = () => {
         </div>
         
         <div className="flex items-center gap-4">
-          <Button className="btn-primary font-inter">
+          <Button 
+            className="btn-primary font-inter"
+            onClick={() => setAnalyticsPopupOpen(true)}
+          >
             <TrendingUp className="w-4 h-4 mr-2" />
             View Analytics
           </Button>
-          <Button variant="outline" className="glass border-white/20 font-inter">
+          <Button 
+            variant="outline" 
+            className="glass border-white/20 font-inter"
+            onClick={() => setExportReportPopupOpen(true)}
+          >
             Export Report
           </Button>
         </div>
@@ -258,6 +274,7 @@ export const Dashboard: React.FC = () => {
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ scale: 1.05 }}
                 className="cursor-pointer"
+                onClick={() => handleQuickAction(action.path)}
               >
                 <div className={`p-6 rounded-xl bg-gradient-to-br ${action.color} text-white shadow-lg hover:shadow-xl transition-all duration-200`}>
                   <action.icon className="w-8 h-8 mb-3" />
@@ -382,6 +399,17 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
       </motion.div>
+
+      {/* Popups */}
+      <AnalyticsPopup 
+        isOpen={analyticsPopupOpen}
+        onClose={() => setAnalyticsPopupOpen(false)}
+      />
+      
+      <ExportReportPopup 
+        isOpen={exportReportPopupOpen}
+        onClose={() => setExportReportPopupOpen(false)}
+      />
     </div>
   );
 };
